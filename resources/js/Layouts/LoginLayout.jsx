@@ -5,7 +5,7 @@ export default function LoginLayout({ children }) {
     return (
         <div className="bg-gray-50 text-black/50" style={{
                 backgroundImage: `
-                    radial-gradient(125% 125% at 50% 90%, #ffffff 40%, #3ABCC2 100%)
+                    radial-gradient(125% 125% at 50% 90%, #ffffff 40%, #3abcc2 100%)
                 `,
                 backgroundSize: "100% 100%",
                 }}> 
