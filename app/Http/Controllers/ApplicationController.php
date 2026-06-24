@@ -74,7 +74,7 @@ class ApplicationController extends Controller
             "reference_phone_2" => 'nullable|string|max:255',
             "reference_company_2" => 'nullable|string|max:255',
             "reference_position_2" => 'nullable|string|max:255',
-            "resume" => 'nullable|file|mimes:pdf|max:2048',
+            "resume" => 'nullable|file|mimes:png,jpg,jpeg|max:2048',
             'vacancy_uuid' => 'required',
         ]);
 
@@ -95,7 +95,7 @@ class ApplicationController extends Controller
         $application->candidate_nric = $validated['ic_number'];
         $application->save();
         
-        return Redirect::route('application');
+        return Redirect::route('welcome');
     }
 
     public function applicationReceivedIndex() :Response
@@ -130,23 +130,23 @@ class ApplicationController extends Controller
         // dd($application_snapshot);
         return pdf()->view('testpdf', ['application' => $application, 'application_snapshot' => $application_snapshot, 'vacancy_name' => $vacancy_name])
         // ->format(Format::A4)
-        ->download('vendor_certificate.pdf');
+        ->download('job_certificate.pdf');
     }
     
     //contoh test pdf
-    public function applicationPdftest()
-    {
-        $application = Application::first();
-        // dd($application);
-        $vacancy_name = Vacancy::findOrFail($application->vacancy_uuid)->value('vacancies_title');
-        // dd($vacancy_name);
-        $application_snapshot = json_decode($application->application_snapshot, true);
-        // dd($application_snapshot['familyMembers']);
-        return view('testpdf', ['application' => $application, 'application_snapshot' => $application_snapshot], ['vacancy_name' => $vacancy_name]);
-        return pdf()->view('testpdf', ['application' => $application, 'application_snapshot' => $application_snapshot])
-        // ->format(Format::A4)
-        ->download('vendor_certificate.pdf');
-    }
+    // public function applicationPdftest()
+    // {
+    //     $application = Application::first();
+    //     // dd($application);
+    //     $vacancy_name = Vacancy::findOrFail($application->vacancy_uuid)->value('vacancies_title');
+    //     // dd($vacancy_name);
+    //     $application_snapshot = json_decode($application->application_snapshot, true);
+    //     // dd($application_snapshot['familyMembers']);
+    //     return view('testpdf', ['application' => $application, 'application_snapshot' => $application_snapshot], ['vacancy_name' => $vacancy_name]);
+    //     return pdf()->view('testpdf', ['application' => $application, 'application_snapshot' => $application_snapshot])
+    //     // ->format(Format::A4)
+    //     ->download('vendor_certificate.pdf');
+    // }
 
     //padam
     public function deleteApplication(Request $requestd):  RedirectResponse
@@ -166,5 +166,14 @@ class ApplicationController extends Controller
         $resume = $application_snapshot['resume'];
        
         return Storage::disk('local')->download($resume, 'attachment.pdf');
+    }
+
+    public function applicationAttachment($id)
+    {
+        $application = Application::findOrFail($id);
+        $application_snapshot = json_decode($application->application_snapshot, true);
+        $resume = $application_snapshot['resume'];
+       
+        return Storage::disk('local')->response($resume);
     }
 }

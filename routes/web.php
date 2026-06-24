@@ -47,10 +47,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/application-received', [ApplicationController::class, 'applicationReceivedIndex'])->name('applicationReceived');
     Route::get('/application-received/view/{id}', [ApplicationController::class, 'viewApplicationReceived'])->name('viewApplicationReceived');
     Route::post('/application-received/delete', [ApplicationController::class, 'deleteApplication'])->name('application.delete');
-
+    Route::get('/application-received/resume/{id}', [ApplicationController::class, 'applicationAttachment'])->name('application.resume');
+    
     //download
     Route::get('/application-received/download/{id}', [ApplicationController::class, 'downloadApplicationAttacthment'])->name('application.downloadAttachment');
     
+
     //about us
     Route::get('/about-us', [DashboardController::class, 'aboutUs'])->name('about.us');
     //pdf

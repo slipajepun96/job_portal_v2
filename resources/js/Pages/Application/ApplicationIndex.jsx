@@ -899,6 +899,12 @@ export default function ApplicationIndex({vacancies}) {
                             {currentPart === 3 && (
                                 <div>
                                     <p className='font-bold'>Bahagian 3 : Maklumat Pendidikan</p>
+                                    <div className='flex'>
+                                        <span class='flex items-center bg-lime-200 border border-success-subtle text-gray-700 text-sm font-medium px-1.5 py-0.5 rounded'>
+                                        <span class="h-1.5 w-1.5 bg-lime-600 rounded-full me-1"></span>
+                                            Sila masukkan pendidikan dari sekolah rendah
+                                        </span>
+                                    </div>
                                     <div className='mt-4'>
                                         <p className='text-sm font-bold underline'>Tambahan Maklumat Pendidikan</p>
                                         <ApplicationEducation onAddEducation={handleAddEducation} />
@@ -1665,7 +1671,7 @@ export default function ApplicationIndex({vacancies}) {
                                                                              
                                     </div>
                                     </div>
-                                    <div className='mt-4 space-y-4'>
+                                    {/* <div className='mt-4 space-y-4'>
                                     <p className='font-bold'>Resume atau Sijil</p>
                                     <div className="grid flex-1 gap-2 md:grid-cols-1">
                                                 <InputLabel
@@ -1680,6 +1686,33 @@ export default function ApplicationIndex({vacancies}) {
                                                     id="resume"
                                                     name="resume"
                                                     accept=".pdf"
+                                                    maxSize={2}
+                                                    showPreview={true}
+                                                    onChange={(e) =>
+                                                        setData('resume', e.target.files[0])
+                                                }
+                                                />
+                                                <InputError
+                                                    message={errors.resume}
+                                                    className="mt-2"
+                                                 />
+                                           </div> 
+                                    </div> */}
+                                    <div className='mt-4 space-y-4'>
+                                    <p className='font-bold'>Gambar Passport</p>
+                                    <div className="grid flex-1 gap-2 md:grid-cols-1">
+                                                <InputLabel
+                                                //  htmlFor="vacancies_title"
+                                                    value={
+                                                 <>
+                                                    Muat Nail Fail Gambar berukuran passport (jika ada) <span className="text-red-500">*</span>
+                                                 </>
+                                            }
+                                                 />
+                                                <FileInput
+                                                    id="resume"
+                                                    name="resume"
+                                                    accept=".png,.jpg,.jpeg"
                                                     maxSize={2}
                                                     showPreview={true}
                                                     onChange={(e) =>

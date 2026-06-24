@@ -205,96 +205,115 @@ console.log(parsed);
                                 </div>
 
                             )}
-
+                            
                             {/* part 1 : butiran peribadi */}
                             <div>
-                            <div className='grid flex-1 gap-2 my-2'>
-                                <div className=''>
-                                    <InputLabel
-                                        htmlFor="vendor_status"
-                                        value={
-                                            <>
-                                                Nama
-                                            </>
-                                        }
-                                    />
-                                    <ValueView value={parsed.name} />
-                                </div>
-                            </div>
-
-                            <div className='grid flex-1 gap-2 md:grid-cols-3 my-2'>
-                                <div className=''>
-                                    <InputLabel
-                                        htmlFor="vendor_status"
-                                        value={
-                                            <>
-                                                Tarikh Lahir
-                                            </>
-                                        }
-                                    />
-                                    <ValueView value={parsed.dateOfBirth} />
+                            <div className='flex flex-col md:flex-row'>
+                                <div className='md:w-1/5'>
+                                    <div className="mt-4 w-48 overflow-hidden border border-slate-200 rounded">
+                                        {parsed.resume ? (
+                                        <img
+                                            src={route('application.resume', application.id)}
+                                            alt="Passport attachment"
+                                            className="w-full h-full object-contain rounded"
+                                        />
+                                        ) : (
+                                            <p className="text-sm text-slate-500">No attachment available.</p>
+                                        )}
+                                    </div>
                                 </div>
 
-                                <div className=''>
-                                    <InputLabel
-                                        htmlFor="vendor_status"
-                                        value={
-                                            <>
-                                                Jantina
-                                            </>
-                                        }
-                                    />
-                                    <ValueView value={parsed.gender} />
-                                </div>
+                                <div className='md:w-4/5 pt-4'>
+                                    <div className='grid flex-1 gap-2 my-2'>
+                                        <div className=''>
+                                            <InputLabel
+                                                htmlFor="vendor_status"
+                                                value={
+                                                    <>
+                                                        Nama
+                                                    </>
+                                                }
+                                            />
+                                            <ValueView value={parsed.name} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className='grid flex-1 gap-2 md:grid-cols-3 my-2'>
+                                            <div className=''>
+                                                <InputLabel
+                                                    htmlFor="vendor_status"
+                                                    value={
+                                                        <>
+                                                            Tarikh Lahir
+                                                        </>
+                                                    }
+                                                />
+                                                <ValueView value={parsed.dateOfBirth} />
+                                            </div>
 
-                                <div className=''>
-                                    <InputLabel
-                                        htmlFor="vendor_status"
-                                        value={
-                                            <>
-                                                Bangsa
-                                            </>
-                                        }
-                                    />
-                                    <ValueView value={parsed.ethnicity} />
-                                </div>
-                            </div>
+                                            <div className=''>
+                                                <InputLabel
+                                                    htmlFor="vendor_status"
+                                                    value={
+                                                        <>
+                                                            Jantina
+                                                        </>
+                                                    }
+                                                />
+                                                <ValueView value={parsed.gender} />
+                                            </div>
 
-                            <div className='grid flex-1 gap-2 md:grid-cols-3 my-2'>
-                                <div className=''>
-                                    <InputLabel
-                                        htmlFor="vendor_status"
-                                        value={
-                                            <>
-                                                Umur
-                                            </>
-                                        }
-                                    />
-                                    <ValueView value={parsed.age} />
-                                </div>
+                                            <div className=''>
+                                                <InputLabel
+                                                    htmlFor="vendor_status"
+                                                    value={
+                                                        <>
+                                                            Bangsa
+                                                        </>
+                                                    }
+                                                />
+                                                <ValueView value={parsed.ethnicity} />
+                                            </div>
+                                        </div>
 
-                                <div className=''>
-                                    <InputLabel
-                                        htmlFor="vendor_status"
-                                        value={
-                                            <>
-                                                Kad Pengenalan
-                                            </>
-                                        }
-                                    />
-                                    <ValueView value={parsed.ic_number} />
-                                </div>
+                                        <div className='grid flex-1 gap-2 md:grid-cols-3 my-2'>
+                                            <div className=''>
+                                                <InputLabel
+                                                    htmlFor="vendor_status"
+                                                    value={
+                                                        <>
+                                                            Umur
+                                                        </>
+                                                    }
+                                                />
+                                                <ValueView value={parsed.age} />
+                                            </div>
 
-                                <div className=''>
-                                    <InputLabel
-                                        htmlFor="vendor_status"
-                                        value={
-                                            <>
-                                                Status Perkahwinan
-                                            </>
-                                        }
-                                    />
-                                    <ValueView value={parsed.marital_status} />
+                                            <div className=''>
+                                                <InputLabel
+                                                    htmlFor="vendor_status"
+                                                    value={
+                                                        <>
+                                                            Kad Pengenalan
+                                                        </>
+                                                    }
+                                                />
+                                                <ValueView value={parsed.ic_number} />
+                                            </div>
+
+                                            <div className=''>
+                                                <InputLabel
+                                                    htmlFor="vendor_status"
+                                                    value={
+                                                        <>
+                                                            Status Perkahwinan
+                                                        </>
+                                                    }
+                                                />
+                                                <ValueView value={parsed.marital_status} />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -487,28 +506,28 @@ console.log(parsed);
                                     <div className='mt-4'>
                                     <p className='text-l font-bold'>Penguasaan Bahasa</p>
                                     </div>
-                                        <table className="w-full border-collapse border border-gray-400 mt-4">
-                                            <thead>
-                                                <tr>
-                                                    <th className="border border-gray-900 bg-gray-200 w-1/2">NAMA BAHASA</th>
-                                                    <th className="border border-gray-900 bg-gray-200 w-1/2">STATUS PENGUASAAN</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td className="border border-gray-900 w-1/2">Bahasa Melayu</td>
-                                                    <td className="border border-gray-900 w-1/2">{parsed.language_malay}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="border border-gray-900 w-1/2">Bahasa Inggeris</td>
-                                                    <td className="border border-gray-900 w-1/2">{parsed.language_english}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="border border-gray-900 w-1/2">Bahasa lain(jika ada):{parsed.other_language ?? "-"}</td>
-                                                    <td className="border border-gray-900 w-1/2">{parsed.language ?? "-"}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <table className="w-full border-collapse border border-gray-400 mt-4">
+                                        <thead>
+                                            <tr>
+                                                <th className="border border-gray-900 bg-gray-200 w-1/2">NAMA BAHASA</th>
+                                                <th className="border border-gray-900 bg-gray-200 w-1/2">STATUS PENGUASAAN</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td className="border border-gray-900 w-1/2">Bahasa Melayu</td>
+                                                <td className="border border-gray-900 w-1/2">{parsed.language_malay}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="border border-gray-900 w-1/2">Bahasa Inggeris</td>
+                                                <td className="border border-gray-900 w-1/2">{parsed.language_english}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="border border-gray-900 w-1/2">Bahasa lain(jika ada):{parsed.other_language ?? "-"}</td>
+                                                <td className="border border-gray-900 w-1/2">{parsed.language ?? "-"}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
 
                             </div>

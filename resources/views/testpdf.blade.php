@@ -16,29 +16,45 @@
                 <div class="p-6 text-gray-900">
                     <div>
                     <div class="text-lg font-bold">BORANG PERMOHONAN PEKERJAAN</div>
-                        <table style="width:50%;">
-                            <tr>
-                                <td style="width:200px;">Jawatan</td>
-                                <td style="width:10px;">:</td>
-                                <td class='uppercase px-1 py-1 text-sm font-semibold'>{{$vacancy_name}}</td>
-                            </tr>
-                            <tr>
-                                <td>Tarikh Temuduga</td>
-                                <td>:</td>
-                                <td style="border-bottom: 1px solid #000;"></td>
-                            </tr>
-                            <tr>
-                                <td>Jangkaan Gaji (RM)</td>
-                                <td>:</td>
-                                <td> <?php echo 'RM' . number_format($application_snapshot['expected_salary'], 2, '.', ',');  ?></td>
-                            </tr>
-                            <tr>
-                                <td>Jangkaan Masuk</td>
-                                <td>:</td>
-                                <td><?php echo date_format(new DateTime($application_snapshot['start_date']), "j/m/Y"); ?></td>
-                            </tr>
-                        </table>
-                        
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-3/5">
+                                <table >
+                                    <tr>
+                                        <td style="width:200px;">Jawatan</td>
+                                        <td style="width:10px;">:</td>
+                                        <td class='uppercase px-1 py-1 text-sm font-semibold'>{{$vacancy_name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tarikh Temuduga</td>
+                                        <td>:</td>
+                                        <td style="border-bottom: 1px solid #000;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jangkaan Gaji (RM)</td>
+                                        <td>:</td>
+                                        <td> <?php echo 'RM' . number_format($application_snapshot['expected_salary'], 2, '.', ',');  ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jangkaan Masuk</td>
+                                        <td>:</td>
+                                        <td><?php echo date_format(new DateTime($application_snapshot['start_date']), "j/m/Y"); ?></td> 
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="md:w-2/5 pb-2 flex justify-end">
+                                <div class="w-32 overflow-hidden border border-slate-900 rounded">
+                                    @if (!empty($application_snapshot['resume']))
+                                        <img
+                                            src="data:image/jpeg;base64,{{ base64_encode(Storage::disk('local')->get($application_snapshot['resume'])) }}"
+                                            alt="Passport attachment"
+                                            style="max-width:100%; height:auto;"
+                                        />
+                                    @else
+                                        <p>No attachment available.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                         <!-- /* part 1 : butiran peribadi */ -->
                         <div class='border'>
                             <div class="text-center font-bold text-sm">MAKLUMAT PERIBADI</div>   
