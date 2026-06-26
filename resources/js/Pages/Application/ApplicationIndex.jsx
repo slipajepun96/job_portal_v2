@@ -902,7 +902,7 @@ export default function ApplicationIndex({vacancies}) {
                                     <div className='flex'>
                                         <span class='flex items-center bg-lime-200 border border-success-subtle text-gray-700 text-sm font-medium px-1.5 py-0.5 rounded'>
                                         <span class="h-1.5 w-1.5 bg-lime-600 rounded-full me-1"></span>
-                                            Sila masukkan pendidikan dari sekolah rendah
+                                            Sila masukkan pendidikan dari sekolah menengah
                                         </span>
                                     </div>
                                     <div className='mt-4'>
