@@ -1705,7 +1705,7 @@ export default function ApplicationIndex({vacancies}) {
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Muat Nail Fail Gambar berukuran passport (jika ada) <span className="text-red-500">*</span>
+                                                    Muat Nail Fail Gambar berukuran passport <span className="text-red-500">*</span>
                                                  </>
                                             }
                                                  />
