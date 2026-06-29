@@ -115,9 +115,9 @@ export default function Welcome({ auth, canResetPassword, status, vacancies }) {
                                             </Link>
                                             </div>
                                         </div>
-                                        <div className='mt-4'>
+                                        {/* <div className='mt-4'>
                                             Daftar sebagai vendor PKPP Agro Sdn. Bhd. sebagai kelayakan untuk menyertai sebut harga & tender yang dibuka oleh PKPP Agro Sdn. Bhd.
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div>
                                         <div className="w-full lg:max-w-xl md:p-6 md:space-y-8 sm:p-8 md:bg-white rounded-lg md:shadow-xl md:border md:border-gray-200">
