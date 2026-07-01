@@ -116,7 +116,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     id="employer_name"
                                     name="employer_name"
                                     value={data.employer_name}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('employer_name', e.target.value)
@@ -144,7 +144,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     id="position"
                                     name="position"
                                     value={data.position}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('position', e.target.value)
@@ -172,7 +172,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     id="start_year"
                                     name="start_year"
                                     value={data.start_year}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('start_year', e.target.value)
@@ -200,7 +200,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     id="end_year"
                                     name="end_year"
                                     value={data.end_year}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('end_year', e.target.value)
@@ -228,7 +228,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     id="final_salary"
                                     name="final_salary"
                                     value={data.final_salary}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('final_salary', e.target.value)
@@ -256,7 +256,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     id="reason_for_leaving"
                                     name="reason_for_leaving"
                                     value={data.reason_for_leaving}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('reason_for_leaving', e.target.value)

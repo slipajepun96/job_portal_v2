@@ -6,7 +6,7 @@ import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function Welcome({ auth, canResetPassword, status, vacancies }) {
+export default function Welcome({ auth, canResetPassword, status, vacancies, success }) {
     const [formType, setFormType] = useState('login'); // 'login', 'register', or 'admin'
 
     // console.log(vacancies);
@@ -98,6 +98,21 @@ export default function Welcome({ auth, canResetPassword, status, vacancies }) {
 
 
                         <main className="mt-6">
+                            {success && (
+                                <div className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                                    {success}
+                                    <div className='p-3 bg-green-100 rounded-xl text-center'>
+                                        <p>Pihak tuan/puan perlu menghantar salinan sijil-sijil / dokumen pendidikan / dokumen sokongan yang berkaitan secara fizikal melalui pos dengan kos tangungan sendiri ke :<br/></p>
+                                        <p className='font-bold'>
+                                            Bahagian Pentadbiran,<br/>
+                                            Ibu Pejabat PKPP Agro Sdn. Bhd.<br/>
+                                            KM 4 Jalan Selendang,<br/>
+                                            26800 Kuala Rompin,<br/>
+                                            Pahang Darul Makmur
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                             <section className=" ">
                                 <div className=" py-2 md:py-8 px-2 md:mx-auto md:max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
                                     <div className="flex flex-col justify-center">

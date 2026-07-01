@@ -95,7 +95,7 @@ class ApplicationController extends Controller
         $application->candidate_nric = $validated['ic_number'];
         $application->save();
         
-        return Redirect::route('welcome');
+        return Redirect::route('welcome')->with('success', 'Permohonan berjaya dihantar.');
     }
 
     public function applicationReceivedIndex() :Response

@@ -109,7 +109,7 @@ export default function ApplicationFamily({onAddFamilyMember}) {
                                     id="family_name"
                                     name="family_name"
                                     value={data.family_name}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('family_name', e.target.value)
@@ -136,7 +136,7 @@ export default function ApplicationFamily({onAddFamilyMember}) {
                                     id="relationship"
                                     name="relationship"
                                     value={data.relationship}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('relationship', e.target.value)
@@ -162,7 +162,7 @@ export default function ApplicationFamily({onAddFamilyMember}) {
                                     id="family_age"
                                     name="family_age"
                                     value={data.family_age}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('family_age', e.target.value)
@@ -190,7 +190,7 @@ export default function ApplicationFamily({onAddFamilyMember}) {
                                     id="family_occupation"
                                     name="family_occupation"
                                     value={data.family_occupation}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('family_occupation', e.target.value)
@@ -218,7 +218,7 @@ export default function ApplicationFamily({onAddFamilyMember}) {
                                     id="family_occupation_name"
                                     name="family_occupation_name"
                                     value={data.family_occupation_name}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('family_occupation_name', e.target.value)

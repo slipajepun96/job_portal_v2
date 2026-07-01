@@ -102,7 +102,7 @@ export default function VacancyAddVacancy({}) {
                                     id="vacancies_title"
                                     name="vacancies_title"
                                     value={data.vacancies_title}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('vacancies_title', e.target.value)
@@ -129,7 +129,7 @@ export default function VacancyAddVacancy({}) {
                                     id="vacancies_location"
                                     name="vacancies_location"
                                     value={data.vacancies_location}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('vacancies_location', e.target.value)
@@ -155,7 +155,7 @@ export default function VacancyAddVacancy({}) {
                                     id="vacancies_description"
                                     name="vacancies_description"
                                     value={data.vacancies_description}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('vacancies_description', e.target.value)
@@ -269,7 +269,7 @@ export default function VacancyAddVacancy({}) {
                                     id="ads_link"
                                     name="ads_link"
                                         value={data.ads_link}
-                                        className="mt-1 block w-full"
+                                        className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('ads_link', e.target.value)

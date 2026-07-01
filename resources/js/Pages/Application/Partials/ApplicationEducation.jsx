@@ -113,7 +113,7 @@ export default function ApplicationEducation({onAddEducation}) {
                                     id="school_name"
                                     name="school_name"
                                     value={data.school_name}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('school_name', e.target.value)
@@ -143,7 +143,7 @@ export default function ApplicationEducation({onAddEducation}) {
                                     name="start_school"
                                     type="number"
                                     value={data.start_school}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('start_school', e.target.value)
@@ -172,7 +172,7 @@ export default function ApplicationEducation({onAddEducation}) {
                                     name="end_school"
                                     type="number"
                                     value={data.end_school}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('end_school', e.target.value)
@@ -186,7 +186,7 @@ export default function ApplicationEducation({onAddEducation}) {
                             </div>
                         </div>
 
-                        <div className="grid flex-1 gap-2 md:grid-cols-1">
+                        <div className="grid flex-1 gap-1 md:grid-cols-1">
                             <InputLabel
                                  //  htmlFor="vacancies_title"
                                 value={
@@ -231,7 +231,7 @@ export default function ApplicationEducation({onAddEducation}) {
                                     id="education_field"
                                     name="education_field"
                                     value={data.education_field}
-                                    className="mt-1 block w-full"
+                                    className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
                                         setData('education_field', e.target.value)
