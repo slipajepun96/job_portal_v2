@@ -1,4 +1,15 @@
 import React, { useState } from 'react';
+import { Search } from 'lucide-react';
+import { Input } from '@/Components/ui/input';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Components/ui/table';
+
 
 export default function DataTable({ columns, data, className = "", showSearch = true }) {
     const [search, setSearch] = useState('');
@@ -25,11 +36,12 @@ export default function DataTable({ columns, data, className = "", showSearch = 
         <div className={className}>
             {/* Search Input */}
             {showSearch && (
-                <div className="mb-4">
-                    <input
+                <div className="relative mb-4">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
                         type="text"
                         placeholder="Cari..."
-                        className="w-full p-2 border border-gray-300 rounded-md"
+                        className="bg-background pl-9"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -37,52 +49,52 @@ export default function DataTable({ columns, data, className = "", showSearch = 
             )}
 
             {/* Table */}
-            <div className="mt-4 text-sm text-gray-600">
+            <div className="mb-2 text-sm text-muted-foreground">
                 Menunjukkan {filteredData.length} daripada {data.length} baris.
             </div>
             
-            <div className="overflow-x-auto">
-                <table className="min-w-full border-collapse border border-gray-200 bg-white">
-                    <thead>
-                        <tr>
+            <div className="overflow-hidden rounded-lg border border-border bg-card">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
                             {columns.map((column) => (
-                                <th
+                                <TableHead
                                     key={column.accessor || column.Header}
-                                    className="px-4 py-2 text-left  border-gray-200 bg-gray-800 text-white"
+                                    className="h-11 bg-primary px-4 font-semibold text-primary-foreground"
                                 >
                                     {column.Header}
-                                </th>
+                                </TableHead>
                             ))}
-                        </tr>
-                    </thead>
-                    <tbody>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
                         {filteredData.map((row, rowIndex) => (
-                            <tr key={rowIndex} className="hover:bg-gray-50">
+                            <TableRow key={rowIndex}>
                                 {columns.map((column) => (
-                                    <td
+                                    <TableCell
                                         key={column.accessor || column.Header}
-                                        className="px-4 py-2 border-b border-gray-200"
+                                        className="px-4 py-3"
                                     >
                                          {/* Check if the column has a custom Cell property */}
                                          {column.Cell
                                             ? column.Cell({ row }) // Render custom Cell
                                             : row[column.accessor]} {/* Render default accessor */}
-                                    </td>
+                                    </TableCell>
                                 ))}
-                            </tr>
+                            </TableRow>
                         ))}
                         {filteredData.length === 0 && (
-                            <tr>
-                                <td
+                            <TableRow>
+                                <TableCell
                                     colSpan={columns.length}
-                                    className="px-4 py-2 text-center text-gray-500"
+                                    className="h-24 px-4 text-center text-muted-foreground"
                                 >
                                     Tiada data ditemukan
-                                </td>
-                            </tr>
+                                </TableCell>
+                            </TableRow>
                         )}
-                    </tbody>
-                </table>
+                    </TableBody>
+                </Table>
             </div>
             {/* Row Count Summary */}
 

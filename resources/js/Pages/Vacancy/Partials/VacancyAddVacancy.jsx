@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
+import { Plus } from 'lucide-react';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import {
@@ -26,12 +27,14 @@ import { format } from "date-fns";
 
 export default function VacancyAddVacancy({}) {
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, transform } = useForm({
         vacancies_title: '',
         vacancies_location: '',
         vacancies_description: '',
         start_date: '',
+        start_time: '08:00',
         end_date: '',
+        end_time: '17:00',
         ads_link: '',
     });
 
@@ -45,6 +48,13 @@ export default function VacancyAddVacancy({}) {
         e.preventDefault();
         // console.log('onSuccess', data);
 
+        // Send the date and time together, e.g. "2026-11-04 08:00"
+        transform((data) => ({
+            ...data,
+            start_date: data.start_date ? `${data.start_date} ${data.start_time}` : '',
+            end_date: data.end_date ? `${data.end_date} ${data.end_time}` : '',
+        }));
+
         post(route('vacancy.save'), {
             onSuccess: () => {
                 reset(
@@ -52,7 +62,9 @@ export default function VacancyAddVacancy({}) {
                     'vacancies_location',
                     'vacancies_description',
                     'start_date',
+                    'start_time',
                     'end_date',
+                    'end_time',
                     'ads_link',
                 );
                 // Close the dialog
@@ -76,8 +88,8 @@ export default function VacancyAddVacancy({}) {
     return (
         <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
             <DialogTrigger asChild>
-                <PrimaryButton variant="outline">
-                    + Tambah Kerja 
+                <PrimaryButton type="button">
+                    <Plus /> Tambah Kerja Kosong
                 </PrimaryButton>
             </DialogTrigger>
             <DialogContent className="max-w-xl">
@@ -94,7 +106,7 @@ export default function VacancyAddVacancy({}) {
                                     htmlFor="vacancies_title"
                                     value={
                                         <>
-                                            Nama Kerja Kosong<span className="text-red-500">*</span>
+                                            Nama Kerja Kosong<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -121,7 +133,7 @@ export default function VacancyAddVacancy({}) {
                                     htmlFor="vacancies_location"
                                     value={
                                         <>
-                                            Lokasi Kerja Kosong<span className="text-red-500">*</span>
+                                            Lokasi Kerja Kosong<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -175,16 +187,17 @@ export default function VacancyAddVacancy({}) {
                                     htmlFor="start_date"
                                     value={
                                         <>
-                                            Tarikh Mula<span className="text-red-500">*</span>
+                                            Tarikh & Masa Mula<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
+                                <div className="mt-1 grid grid-cols-[1fr_8rem] gap-2">
                                 <Popover open={openStartDate} onOpenChange={setOpenStartDate} modal={false}>
                                         <PopoverTrigger asChild>
                                                     <button
                                                         type="button"
                                                         className={cn(
-                                                            "mt-1 h-9 w-full text-left text-sm bg-white border border-gray-300 rounded-md px-3 py-2",
+                                                            "h-9 w-full text-left text-sm bg-background border border-border rounded-md px-3 py-2",
                                                             !data.start_date && "text-muted-foreground"
                                                         )}
                                                     >
@@ -206,6 +219,15 @@ export default function VacancyAddVacancy({}) {
                                                 />
                                                 </PopoverContent>
                                         </Popover>
+                                <TextInput
+                                    id="start_time"
+                                    type="time"
+                                    aria-label="Masa"
+                                    value={data.start_time}
+                                    onChange={(e) => setData('start_time', e.target.value)}
+                                    required
+                                />
+                                </div>
                                     <InputError
                                     message={errors.start_date}
                                     className="mt-2"
@@ -218,16 +240,17 @@ export default function VacancyAddVacancy({}) {
                                     htmlFor="end_date"
                                     value={
                                         <>
-                                            Tarikh Akhir<span className="text-red-500">*</span>
+                                            Tarikh & Masa Tutup<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
+                                <div className="mt-1 grid grid-cols-[1fr_8rem] gap-2">
                                 <Popover open={openEndDate} onOpenChange={setOpenEndDate} modal={false}>
                                                 <PopoverTrigger asChild>
                                                     <button
                                                         type="button"
                                                         className={cn(
-                                                            "mt-1 h-9 w-full text-left text-sm bg-white border border-gray-300 rounded-md px-3 py-2",
+                                                            "h-9 w-full text-left text-sm bg-background border border-border rounded-md px-3 py-2",
                                                             !data.end_date && "text-muted-foreground"
                                                         )}
                                                     >
@@ -249,6 +272,15 @@ export default function VacancyAddVacancy({}) {
                                                 />
                                                 </PopoverContent>
                                             </Popover>
+                                <TextInput
+                                    id="end_time"
+                                    type="time"
+                                    aria-label="Masa"
+                                    value={data.end_time}
+                                    onChange={(e) => setData('end_time', e.target.value)}
+                                    required
+                                />
+                                </div>
                                 <InputError
                                     message={errors.end_date}
                                     className="mt-2"
@@ -261,7 +293,7 @@ export default function VacancyAddVacancy({}) {
                                     htmlFor="ads_link"
                                     value={
                                         <>
-                                            Pautan ke Iklan Jawatan<span className="text-red-500">*</span>
+                                            Pautan ke Iklan Jawatan<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />

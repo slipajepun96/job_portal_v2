@@ -1,7 +1,9 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { Textarea } from '@/Components/ui/textarea';
+import { cn } from '@/lib/utils';
 
-export default forwardRef(function TextInput(
-    { type = 'text', className = '', isFocused = false, ...props },
+export default forwardRef(function TextArea(
+    { className = '', isFocused = false, ...props },
     ref,
 ) {
     const localRef = useRef(null);
@@ -17,15 +19,10 @@ export default forwardRef(function TextInput(
     }, [isFocused]);
 
     return (
-        <textarea
+        <Textarea
             {...props}
-            className={
-                // 'rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ' +
-                'rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1' +
-                className
-            }
+            className={cn('bg-background', className)}
             ref={localRef}
         />
     );
 });
-// border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1

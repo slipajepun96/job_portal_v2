@@ -21,7 +21,7 @@ class ApplicationController extends Controller
 {
     public function applicationIndex() :Response
     {
-        $vacancies = Vacancy::where('start_date','<=',now())->where('end_date','>=',now())->get();
+        $vacancies = Vacancy::open()->orderBy('end_date')->get();
         return Inertia::render('Application/ApplicationIndex', [
             'vacancies' => $vacancies
         ]);
@@ -49,6 +49,7 @@ class ApplicationController extends Controller
             "phone_home" => 'nullable|string',
             "expected_salary" => 'required|string|max:255',  
             "start_date" => 'required|string|max:255',
+            "currently_employed" => 'required|in:Ya,Tidak',
             "salary" => 'nullable|string|max:255',            
             "allowance" => 'nullable|string',            
             "report_to" => 'nullable|string|max:255',
@@ -75,7 +76,14 @@ class ApplicationController extends Controller
             "reference_company_2" => 'nullable|string|max:255',
             "reference_position_2" => 'nullable|string|max:255',
             "resume" => 'nullable|file|mimes:png,jpg,jpeg|max:2048',
-            'vacancy_uuid' => 'required',
+            'vacancy_uuid' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (! Vacancy::open()->whereKey($value)->exists()) {
+                        $fail('Permohonan untuk jawatan ini telah ditutup atau belum dibuka.');
+                    }
+                },
+            ],
         ]);
 
             if ($request->hasFile('resume')) 

@@ -1,24 +1,33 @@
-export default function Alert({ type, message }) {
+import { useState } from 'react';
+import { CheckCircle2, AlertTriangle, XCircle, X } from 'lucide-react';
+import { Alert as UiAlert, AlertDescription } from '@/Components/ui/alert';
+import { cn } from '@/lib/utils';
+
+const styles = {
+    success: { className: 'border-primary/30 bg-accent text-accent-foreground', Icon: CheckCircle2 },
+    error: { className: 'border-destructive/40 bg-destructive/5 text-destructive', Icon: XCircle },
+    warning: { className: 'border-amber-300 bg-amber-50 text-amber-900', Icon: AlertTriangle },
+};
+
+export default function Alert({ type = 'success', message }) {
     const [isVisible, setIsVisible] = useState(true);
 
     if (!message || !isVisible) return null;
 
-    const alertClasses = {
-        success: 'bg-green-100 border-green-400 text-green-700',
-        error: 'bg-red-100 border-red-400 text-red-700',
-        warning: 'bg-yellow-100 border-yellow-400 text-yellow-700'
-    };
+    const { className, Icon } = styles[type] || styles.success;
 
     return (
-        <div className={`border px-4 py-3 rounded relative ${alertClasses[type]} flex justify-between items-center`} role="alert">
-            <span className="block sm:inline">{message}</span>
+        <UiAlert className={cn('pr-10', className)}>
+            <Icon className="h-4 w-4 !text-current" />
+            <AlertDescription>{message}</AlertDescription>
             <button
+                type="button"
                 onClick={() => setIsVisible(false)}
-                className="absolute top-0 right-0 px-4 py-3"
-                aria-label="Close alert"
+                className="absolute right-3 top-3 rounded-sm opacity-70 transition hover:opacity-100"
+                aria-label="Tutup"
             >
-                <span className="text-xl">&times;</span>
+                <X className="h-4 w-4" />
             </button>
-        </div>
+        </UiAlert>
     );
 }

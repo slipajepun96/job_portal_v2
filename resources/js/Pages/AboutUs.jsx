@@ -1,36 +1,34 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Separator } from '@/Components/ui/separator';
 import { Head } from '@inertiajs/react';
-import InputLabel from '@/Components/InputLabel';
-import { Link } from '@inertiajs/react';
 
 export default function AboutUs() {
-
-
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    About Us
-                </h2>
-            }
-        >
-            <Head title="Dashboard" />
+        <AuthenticatedLayout header={<h2>Tentang Kami</h2>}>
+            <Head title="Tentang Kami" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg text-center bg-sky-500/30">
-                        <div className="uppercase p-2 md:p-4 mt-6 text-sm font-bold">
-                            tentang kami
-                        </div>
-                        
-                        <div className="p-2 md:p-4 mt-6 text-sm shadow-sm sm:rounded-lg text-center bg-sky-800/30">
-                            Untuk memudahkan urusan melihat jawatan kosong yang ditawarkan 
-                            oleh syarikat dan menilai permohonan yang dihantar.
-                        
-                            <div>Dibuat: 24/02/2026</div>
-                            <div>Oleh:</div> 
-                        </div>
-                    </div>
+            <div className="py-8">
+                <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Sistem Permohonan Pekerjaan</CardTitle>
+                            <CardDescription>PKPP Agro Sdn. Bhd.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4 text-sm text-foreground">
+                            <p>
+                                Untuk memudahkan urusan melihat jawatan kosong yang ditawarkan
+                                oleh syarikat dan menilai permohonan yang dihantar.
+                            </p>
+                            <Separator />
+                            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2">
+                                <dt className="text-muted-foreground">Dibuat</dt>
+                                <dd>24/02/2026</dd>
+                                <dt className="text-muted-foreground">Oleh</dt>
+                                <dd>-</dd>
+                            </dl>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </AuthenticatedLayout>

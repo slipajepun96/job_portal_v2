@@ -8,16 +8,17 @@ export default function Edit({ mustVerifyEmail, status }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Profile
-                </h2>
+                <div>
+                    <h2>Profil</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Kemas kini maklumat akaun dan kata laluan anda.</p>
+                </div>
             }
         >
-            <Head title="Profile" />
+            <Head title="Profil" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+            <div className="py-8">
+                <div className="mx-auto max-w-3xl space-y-6 px-4 sm:px-6 lg:px-8">
+                    <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8">
                         <UpdateProfileInformationForm
                             mustVerifyEmail={mustVerifyEmail}
                             status={status}
@@ -25,11 +26,11 @@ export default function Edit({ mustVerifyEmail, status }) {
                         />
                     </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+                    <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8">
                         <UpdatePasswordForm className="max-w-xl" />
                     </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+                    <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8">
                         <DeleteUserForm className="max-w-xl" />
                     </div>
                 </div>

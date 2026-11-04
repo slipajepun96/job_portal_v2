@@ -112,17 +112,17 @@ export default forwardRef(function FileInput(
                         type="button"
                         onClick={() => localRef.current?.click()}
                         className={
-                            'w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-md hover:border-indigo-500 hover:bg-gray-50 transition-colors ' +
+                            'w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-input rounded-lg bg-background hover:border-primary hover:bg-accent/50 transition-colors ' +
                             className
                         }
                     >
-                        <Upload className="w-5 h-5 text-gray-400" />
-                        <span className="text-sm text-gray-600">
+                        <Upload className="w-5 h-5 text-primary" />
+                        <span className="text-sm text-muted-foreground">
                             Klik untuk muat naik (Max {maxSize}MB)
                         </span>
                     </button>
                 ) : (
-                    <div className="border-2 border-gray-300 rounded-md p-3">
+                    <div className="rounded-lg border border-border bg-background p-3">
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3 flex-1 min-w-0">
                                 {preview ? (
@@ -132,16 +132,16 @@ export default forwardRef(function FileInput(
                                         className="w-12 h-9 object-cover rounded"
                                     />
                                 ) : (
-                                    <div className="w-12 h-9 bg-gray-100 rounded flex items-center justify-center">
-                                        <FileIcon className="w-6 h-6 text-gray-400" />
+                                    <div className="w-12 h-9 bg-muted rounded flex items-center justify-center">
+                                        <FileIcon className="w-6 h-6 text-muted-foreground" />
                                     </div>
                                 )}
                                 
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 truncate">
+                                    <p className="text-sm font-medium text-foreground truncate">
                                         {selectedFile.name}
                                     </p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-muted-foreground">
                                         {formatFileSize(selectedFile.size)}
                                     </p>
                                 </div>
@@ -151,14 +151,14 @@ export default forwardRef(function FileInput(
                                 <button
                                     type="button"
                                     onClick={() => localRef.current?.click()}
-                                    className="px-3 py-1 text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                                    className="px-3 py-1 text-xs font-medium text-primary hover:underline"
                                 >
                                     Tukar
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleRemove}
-                                    className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                                    className="p-1 text-destructive hover:bg-destructive/10 rounded"
                                 >
                                     <X className="w-4 h-4" />
                                 </button>
@@ -169,11 +169,11 @@ export default forwardRef(function FileInput(
             </div>
             
             {error && (
-                <p className="mt-1 text-sm text-red-600">{error}</p>
+                <p className="mt-1 text-sm text-destructive">{error}</p>
             )}
             
             {accept && !selectedFile && (
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-muted-foreground">
                     Format yang diterima: {accept.replace(/\./g, '').toUpperCase()}
                 </p>
             )}

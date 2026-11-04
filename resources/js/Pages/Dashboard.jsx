@@ -1,75 +1,80 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import InputLabel from '@/Components/InputLabel';
-import { Link } from '@inertiajs/react';
+import { Badge } from '@/Components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Head, Link } from '@inertiajs/react';
+import { Briefcase, ChevronRight, FileText } from 'lucide-react';
 
-export default function Dashboard({vacancies, applications}) {
-
-
+export default function Dashboard({ vacancies, applications }) {
     const number_of_vacancies = vacancies.length;
-    // console.log(number_of_vacancies);
     const number_of_applications = applications.length;
-    // console.log(number_of_applications);
 
-    function getApplicationNumber(vacancy_uuid)
-    {
-        const applicationNum = applications.filter(item => item.vacancy_uuid === vacancy_uuid).length;
-        
-        return applicationNum;
+    function getApplicationNumber(vacancy_uuid) {
+        return applications.filter((item) => item.vacancy_uuid === vacancy_uuid).length;
     }
+
+    const stats = [
+        { label: 'Jawatan Dibuka', value: number_of_vacancies, Icon: Briefcase, accent: 'bg-highlight text-highlight-foreground' },
+        { label: 'Jumlah Permohonan', value: number_of_applications, Icon: FileText, accent: 'bg-primary text-primary-foreground' },
+    ];
 
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Utama
-                </h2>
+                <div>
+                    <h2>Utama</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Ringkasan jawatan dan permohonan yang diterima.</p>
+                </div>
             }
         >
-            <Head title="Dashboard" />
+            <Head title="Utama" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="border border-gray-300 p-4 rounded-xl bg-white mb-8">
-                            <div className="grid flex-1 gap-2 md:grid-cols-2 my-2">
-                                <div className="p-6 text-gray-900 border border-gray-300 bg-lime-500 rounded-lg shadow">
-                                    <div className=''>                                       
-                                        Jawatan Dibuka                                                    
+            <div className="py-8">
+                <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {stats.map(({ label, value, Icon, accent }) => (
+                            <Card key={label}>
+                                <CardContent className="flex items-center justify-between p-6">
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+                                        <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">{value}</p>
                                     </div>
-                                    <div className="font-bold text-right text-2xl">{number_of_vacancies}</div>
-                                </div>
-
-                                <div className="p-6 text-gray-900 border border-gray-300 bg-green-500 rounded-lg shadow">
-                                    <div className=''>
-                                        Jumlah Permohonan
-                                    </div>
-                                    <div className="font-bold text-right text-2xl">{number_of_applications}</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="p-2 md:p-4 mt-6 text-sm font-bold">
-                            SENARAI PERMOHONAN
-                        </div>
-
-                        <div className="p-2 grid flex-1 gap-2 md:grid-cols-3 my-2">
-                            
-                            {vacancies.map((vacancy) => (
-                                <Link href={route('viewApplicantList', { id: vacancy.id})}>
-                                <div className="p-6 text-gray-900 border border-gray-300 rounded-lg bg-orange-200 shadow">
-                                    <div className='uppercase font-bold'>
-                                        {vacancy.vacancies_title}                                                
-                                    </div>
-                                    <div className="">{getApplicationNumber(vacancy.id)} permohonan</div>
-                                </div>
-                                </Link>
-                            ))}
-                            
-                        </div>
-                        
-
+                                    <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${accent}`}>
+                                        <Icon className="h-6 w-6" />
+                                    </span>
+                                </CardContent>
+                            </Card>
+                        ))}
                     </div>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Permohonan Mengikut Jawatan</CardTitle>
+                            <CardDescription>Klik jawatan untuk melihat senarai pemohon.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {vacancies.length === 0 ? (
+                                <p className="py-8 text-center text-sm text-muted-foreground">Tiada jawatan dibuka.</p>
+                            ) : (
+                                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                                    {vacancies.map((vacancy) => (
+                                        <Link
+                                            key={vacancy.id}
+                                            href={route('viewApplicantList', { id: vacancy.id })}
+                                            className="group flex items-center justify-between rounded-lg border border-border bg-background p-4 transition hover:border-primary/40 hover:bg-accent"
+                                        >
+                                            <div className="min-w-0">
+                                                <p className="truncate font-medium text-foreground">{vacancy.vacancies_title}</p>
+                                                <Badge variant="secondary" className="mt-2">
+                                                    {getApplicationNumber(vacancy.id)} permohonan
+                                                </Badge>
+                                            </div>
+                                            <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </AuthenticatedLayout>

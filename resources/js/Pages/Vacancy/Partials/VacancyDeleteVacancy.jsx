@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
+import { Trash2 } from 'lucide-react';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import {
@@ -30,7 +31,6 @@ export default function VacancyDeleteVacancy({vacancy}) {
         id: vacancy.id,
 
     });
-console.log('vacancyDelete',);
     const [openStartDate, setOpenStartDate] = useState(false);
     const [openEndDate, setOpenEndDate] = useState(false);
 
@@ -73,35 +73,35 @@ console.log('vacancyDelete',);
     return (
         <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
             <DialogTrigger asChild>
-                <PrimaryButton variant="outline">
-                    Padam
+                <PrimaryButton
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                >
+                    <Trash2 /> Padam
                 </PrimaryButton>
             </DialogTrigger>
             <DialogContent className="max-w-xl">
                 <DialogHeader>
-                    <DialogTitle>Padam Pemohonan</DialogTitle>
+                    <DialogTitle>Padam Kerja Kosong</DialogTitle>
                 </DialogHeader>
                 <div className="mt-4">
 
                     <form onSubmit={submit}>
                     <div className="items-center space-y-2">
                        
-                        < div className="grid flex-1 gap-2">
-                            <div>
-                                <InputLabel
-                                    // htmlFor="ads_link"
-                                    value={
-                                        <>
-                                            Do you want to delete this information?
-                                        </>
-                                    }
-                                />
-
-                            </div>
+                        <p className="text-sm text-muted-foreground">
+                            Adakah anda pasti mahu memadam maklumat ini? Tindakan ini tidak boleh dibatalkan.
+                        </p>
+                        <div className="flex justify-end gap-2 pt-4">
+                            <SecondaryButton onClick={() => handleDialogClose(false)}>
+                                Batal
+                            </SecondaryButton>
+                            <PrimaryButton variant="destructive" disabled={processing}>
+                                Padam
+                            </PrimaryButton>
                         </div>
-                        <PrimaryButton disabled={processing}>
-                           Padam
-                        </PrimaryButton>
                     </div>
                 </form>
 

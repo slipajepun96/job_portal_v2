@@ -2,14 +2,14 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import DataTable from '@/Components/DataTable';
 import { Link } from '@inertiajs/react';
-import PrimaryButton from '@/Components/PrimaryButton';
+import Alert from '@/Components/Alert';
+import { Badge } from '@/Components/ui/badge';
 import VacancyAddVacancy from './Partials/VacancyAddVacancy';
 import VacancyDeleteVacancy from './Partials/VacancyDeleteVacancy';
 import { useState, useEffect} from 'react';
 
 export default function VacancyIndex({vacancy, success}) {
 
-console.log(success);
     const columns = [
         // { Header: 'Nama', accessor: 'allottee_name' },
         // { Header: 'No. Fail / Geran', accessor: 'lot_file_num' },
@@ -19,21 +19,35 @@ console.log(success);
             Cell: ({ row }) => (
                 <div className="flex flex-col">
                     <div className='font-semibold'>{row.vacancies_title}</div>
-                    <div className='font-normal text-sm'>{row.vacancies_description}</div>
+                    <div className='text-sm text-muted-foreground'>{row.vacancies_description}</div>
                 </div>
             ),
         },
 
         {
-            Header: 'Tarikh Iklan',
+            Header: 'Tempoh Permohonan',
             accessor: ['start_date'],
             Cell: ({ row }) => (
-                <div className="flex items-center space-x-2">
-                    <div className='font-semibold'>{formatDateTime(row.start_date)}</div> 
-                    <span className="text-gray-950">-</span>
-                    <div className="font-semibold">{formatDateTime(row.end_date)}</div>
+                <div className="space-y-0.5 text-sm tabular-nums">
+                    <div><span className="text-muted-foreground">Buka:</span> {formatDateTime(row.start_date)}</div>
+                    <div><span className="text-muted-foreground">Tutup:</span> {formatDateTime(row.end_date)}</div>
                 </div>
             ),
+        },
+
+        {
+            Header: 'Status',
+            accessor: 'status',
+            Cell: ({ row }) => {
+                const now = new Date();
+                if (now < new Date(row.start_date)) {
+                    return <Badge variant="outline">Belum Dibuka</Badge>;
+                }
+                if (now > new Date(row.end_date)) {
+                    return <Badge variant="secondary" className="text-muted-foreground">Ditutup</Badge>;
+                }
+                return <Badge className="border-transparent bg-highlight text-highlight-foreground hover:bg-highlight">Dibuka</Badge>;
+            },
 
         },
 
@@ -42,7 +56,7 @@ console.log(success);
             accessor: ['ads_link'],
             Cell: ({ row }) => (
                 <div className="flex flex-col">
-                    <div className='font-semibold'>{row.ads_link}</div> 
+                    <a href={row.ads_link} target='_blank' rel='noreferrer' className='break-all text-sm font-medium text-primary hover:underline'>{row.ads_link}</a> 
                 </div>
             ),
         },
@@ -107,37 +121,41 @@ console.log(success);
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
         
-        return `${day}/${month}/${year}`;
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        return `${day}/${month}/${year}, ${hours}:${minutes}`;
     };
 
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Kerja Kosong
-                </h2>
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2>Kerja Kosong</h2>
+                        <p className="mt-1 text-sm text-muted-foreground">Urus jawatan yang diiklankan kepada pemohon.</p>
+                    </div>
+                    <VacancyAddVacancy/>
+                </div>
             }
         >
-            <Head title="Dashboard" />
+            <Head title="Kerja Kosong" />
 
             
 
-            <div className="py-12">
+            <div className="py-8">
                 
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+                        <div className="p-6">
                             {successMessage && (
-                                <div className="p-4 bg-green-300 rounded-lg shadow-md mb-3">
-                                    Berjaya Dipadam!
+                                <div className="mb-4">
+                                    <Alert type="success" message="Berjaya dipadam." />
                                 </div>
 
                             )}
 
-                            <div className="flex justify-end mb-4">
-                                <VacancyAddVacancy/>
-                            </div>
-                            <DataTable columns={columns} data={vacancy} className='mt-4'/>
+                            <DataTable columns={columns} data={vacancy} />
                         </div>
                     </div>
                 </div>

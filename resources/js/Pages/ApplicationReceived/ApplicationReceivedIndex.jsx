@@ -2,16 +2,16 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import DataTable from '@/Components/DataTable';
 import { Link } from '@inertiajs/react';
-import PrimaryButton from '@/Components/PrimaryButton';
+import { Button } from '@/Components/ui/button';
+import Alert from '@/Components/Alert';
 import { useState, useEffect} from 'react';
 // import ApplicationIndex from './Application/ApplicationIndex';
 import ViewApplicationReceived from './ViewApplicationReceived';
 import ApplicationDelete from './Partials/ApplicationDelete';
-import { ChartNoAxesColumnDecreasingIcon, Printer } from 'lucide-react';
+import { Eye, Paperclip, Printer } from 'lucide-react';
 import { ChevronLeft } from 'lucide-react';
 
 export default function ApplicationReceivedIndex({applications, vacancies, success, backRoute}) {
-    console.log(backRoute);            
 
     const vacancyTitle = ''
 
@@ -33,8 +33,8 @@ function getVacancyTitle(vacancy_uuid)
                 return (
                     <div className="flex flex-col">
                         
-                        <div className='font-bold'>{dataSnapshot.name}</div>
-                        <div className='font-thin'>{row.candidate_nric}</div>
+                        <div className='font-semibold'>{dataSnapshot.name}</div>
+                        <div className='text-sm tabular-nums text-muted-foreground'>{row.candidate_nric}</div>
                     </div>
                 );
             },
@@ -45,7 +45,7 @@ function getVacancyTitle(vacancy_uuid)
             accessor: [],
             Cell: ({ row }) => (
                 <div className="flex items-center space-x-2">
-                    <div className='font-semibold'>{getVacancyTitle(row.vacancy_uuid)}</div> 
+                    <div>{getVacancyTitle(row.vacancy_uuid)}</div> 
                 </div>
             ),
 
@@ -56,7 +56,7 @@ function getVacancyTitle(vacancy_uuid)
             accessor: ['created_at'],
             Cell: ({ row }) => (
                 <div className="flex flex-col">
-                    <div className='font-semibold'>{formatDateTime(row.created_at)}</div> 
+                    <div className='tabular-nums text-muted-foreground'>{formatDateTime(row.created_at)}</div> 
                 </div>
             ),
 
@@ -67,40 +67,32 @@ function getVacancyTitle(vacancy_uuid)
             accessor: 'actions',
             Cell: ({ row }) => {
                  const dataSnapshot = JSON.parse(row.application_snapshot);
-                 console.log(dataSnapshot);
                 return (
-                <div className="flex space-x-2 gap-2">
-                    {/* <AllotteeEdit allottee={row} /> */}
-                    
-                    <Link href={route('viewApplicationReceived', row.id)}>
-                    {<PrimaryButton
-                        className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-red-600"
-                    >
-                        Papar
-                    </PrimaryButton>}
-                    </Link>
-                
-                    <a href={route('applicationPdf',row.id)} target='_blank'>
-                    <PrimaryButton
-                        className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-red-600"
-                        // onClick={() => handleDelete(row.id)}  
-                    >
-                        Cetak
-                    </PrimaryButton>
-                    </a>
-                    {/* {dataSnapshot.resume !== null && */}
-                    {Object.keys(dataSnapshot.resume).length > 0 &&
-                        (
-                            <button 
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    window.location.href = route('application.downloadAttachment', { id: row.id });
-                                }}
-                            >
-                                <PrimaryButton className="gap-2"><Printer /> Lampiran</PrimaryButton>
-                            </button>
-                        )
-                    }
+                <div className="flex flex-wrap gap-2">
+                    <Button asChild size="sm">
+                        <Link href={route('viewApplicationReceived', row.id)}>
+                            <Eye /> Papar
+                        </Link>
+                    </Button>
+
+                    <Button asChild size="sm" variant="outline">
+                        <a href={route('applicationPdf', row.id)} target='_blank' rel='noreferrer'>
+                            <Printer /> Cetak
+                        </a>
+                    </Button>
+
+                    {Object.keys(dataSnapshot.resume).length > 0 && (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                window.location.href = route('application.downloadAttachment', { id: row.id });
+                            }}
+                        >
+                            <Paperclip /> Lampiran
+                        </Button>
+                    )}
 
 
                     <ApplicationDelete applications={row}/>
@@ -143,32 +135,27 @@ function getVacancyTitle(vacancy_uuid)
                     {backRoute === 'dashboard' && (
                     <Link
                         href={route('dashboard')}
-                        className="hover:bg-gray-100 rounded px-1 transition-colors"
+                        className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                     >
-                        <ChevronLeft className="w-7 h-7" />
+                        <ChevronLeft className="h-6 w-6" />
                     </Link>)}
-                    <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        Senarai Permohonan
-                    </h2>
+                    <h2>Senarai Permohonan</h2>
                 </div>
             }
         >
-            <Head title="Dashboard" />
-            <div className="py-12">             
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
+            <Head title="Senarai Permohonan" />
+            <div className="py-8">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+                        <div className="p-6">
                             {successMessage && (
-                                <div className="p-4 bg-green-300 rounded-lg shadow-md mb-3">
-                                    Berjaya Dipadam!
+                                <div className="mb-4">
+                                    <Alert type="success" message="Berjaya dipadam." />
                                 </div>
 
                             )}
 
-                            <div className="flex justify-end mb-4">
-                                {/* <VacancyAddVacancy/> */}
-                            </div>
-                            <DataTable columns={columns} data={applications} className='mt-4'/>
+                            <DataTable columns={columns} data={applications} />
                         </div>
                     </div>
                 </div>

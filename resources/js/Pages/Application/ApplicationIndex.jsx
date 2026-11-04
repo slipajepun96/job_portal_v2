@@ -16,6 +16,7 @@ import { Calendar } from "@/Components/ui/calendar";
 import ApplicationFamily from './Partials/ApplicationFamily';
 import ApplicationEducation from './Partials/ApplicationEducation';
 import ApplicationEmployer from './Partials/ApplicationEmployer';
+import SectionHeading from '@/Components/SectionHeading';
 import {
   InputGroup,
   InputGroupAddon,
@@ -30,7 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { cn } from "@/lib/utils";
+import { cn, sanitizeCurrency } from "@/lib/utils";
 import { format } from "date-fns";
 
 import {
@@ -48,6 +49,18 @@ import {
 //     SelectTrigger,
 //     SelectValue,
 // } from "@/Components/ui/select"
+
+const STEPS = [
+    'Maklumat Peribadi',
+    'Keluarga',
+    'Pendidikan',
+    'Pekerjaan',
+    'Pekerjaan Terkini',
+    'Bahasa & Lain-lain',
+    'Kemahiran & Rujukan',
+    'Ringkasan',
+];
+
 
 export default function ApplicationIndex({vacancies}) {
 // console.log(vacancies);
@@ -123,6 +136,7 @@ export default function ApplicationIndex({vacancies}) {
             
             educationData: [],
 
+            currently_employed: '',
             salary: '',
             allowance: '',
             report_to: '',
@@ -215,6 +229,7 @@ export default function ApplicationIndex({vacancies}) {
 
     const requiredFieldsByPart = {
         1: ['vacancy_uuid', 'name', 'ic_number', 'age', 'dateOfBirth', 'gender', 'ethnicity', 'marital_status', 'address', 'no_phone', 'email', 'expected_salary', 'start_date'],
+        5: ['currently_employed'],
         6: ['language_malay', 'language_english', 'crime_charge', 'bankruptcy', 'business_involvement', 'license', 'smoker', 'drinker', 'medical_condition', 'physical_disability'],
         7: ['achievement', 'reference_name_1', 'reference_relationship_1', 'reference_phone_1', 'resume'],
     };
@@ -380,6 +395,88 @@ export default function ApplicationIndex({vacancies}) {
         }
     }
 
+    // MyKad format: YYMMDD-PB-###G
+    const formatIcNumber = (digits) =>
+        [digits.slice(0, 6), digits.slice(6, 8), digits.slice(8, 12)].filter(Boolean).join('-');
+
+    const getBirthDateFromIc = (digits) => {
+        if (digits.length < 6) return null;
+
+        const yy = parseInt(digits.slice(0, 2), 10);
+        const mm = parseInt(digits.slice(2, 4), 10);
+        const dd = parseInt(digits.slice(4, 6), 10);
+        const today = new Date();
+
+        // Assume the current century unless that puts the birth date in the future
+        let year = Math.floor(today.getFullYear() / 100) * 100 + yy;
+        let birthDate = new Date(year, mm - 1, dd);
+        if (birthDate > today) {
+            year -= 100;
+            birthDate = new Date(year, mm - 1, dd);
+        }
+
+        if (birthDate.getFullYear() !== year || birthDate.getMonth() !== mm - 1 || birthDate.getDate() !== dd) {
+            return null;
+        }
+
+        return birthDate;
+    };
+
+    const getAgeFromBirthDate = (birthDate) => {
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const hadBirthday =
+            today.getMonth() > birthDate.getMonth() ||
+            (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+        return hadBirthday ? age : age - 1;
+    };
+
+    const [icAlert, setIcAlert] = useState('');
+
+    const handleIcNumberChange = (value) => {
+        const digits = value.replace(/\D/g, '').slice(0, 12);
+        const birthDate = getBirthDateFromIc(digits);
+
+        if (digits.length >= 6 && !birthDate) {
+            setIcAlert('Tarikh lahir dalam nombor kad pengenalan tidak sah.');
+        } else if (digits.length > 0 && digits.length < 12) {
+            setIcAlert('Nombor kad pengenalan mesti 12 digit.');
+        } else {
+            setIcAlert('');
+        }
+
+        if (!birthDate) {
+            setData('ic_number', formatIcNumber(digits));
+            return;
+        }
+
+        const age = getAgeFromBirthDate(birthDate);
+        setAgeAlert(!(age >= 18 && age < 70));
+        setData((prev) => ({
+            ...prev,
+            ic_number: formatIcNumber(digits),
+            dateOfBirth: format(birthDate, 'yyyy-MM-dd'),
+            age,
+        }));
+    };
+
+    const handleCurrentlyEmployedChange = (value) => {
+        if (value === 'Ya') {
+            setData('currently_employed', value);
+            return;
+        }
+
+        setData((prev) => ({
+            ...prev,
+            currently_employed: value,
+            salary: '',
+            allowance: '',
+            report_to: '',
+            report_count: '',
+            notice_period: '',
+        }));
+    };
+
     const vacancy = vacancies.map(value=>({value:value.id, label:value.vacancies_title}));
 
     const parsed = {
@@ -421,7 +518,7 @@ export default function ApplicationIndex({vacancies}) {
     };
 
     const ValueView = ({ value }) => (
-        <div className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800">
+        <div className="w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground">
             {value ?? '-'}
         </div>
     );
@@ -429,7 +526,7 @@ export default function ApplicationIndex({vacancies}) {
     const DataTablePrintView = ({ columns, data: tableData, className = '' }) => {
         if (!Array.isArray(tableData) || tableData.length === 0) {
             return (
-                <div className={`${className} rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600`}>
+                <div className={`${className} rounded-md border border-border bg-muted px-4 py-3 text-sm text-muted-foreground`}>
                     Tiada data.
                 </div>
             );
@@ -492,7 +589,7 @@ export default function ApplicationIndex({vacancies}) {
             Cell: ({ row }) => (
                 <div className="flex items-center space-x-2">
                     <div className='font-normal text-sm'>{row.start_school}</div> 
-                    <span className="text-gray-950">-</span>
+                    <span className="text-foreground">-</span>
                     <div className='font-normal text-sm'>{row.end_school}</div>
                 </div>
             ),
@@ -532,7 +629,7 @@ export default function ApplicationIndex({vacancies}) {
             Cell: ({ row }) => (
                 <div className="flex items-center space-x-2">
                     <div className='font-normal text-sm'>{row.start_year}</div> 
-                    <span className="text-gray-950">-</span>
+                    <span className="text-foreground">-</span>
                     <div className='font-normal text-sm'>{row.end_year}</div>
                 </div>
             ),
@@ -554,35 +651,76 @@ export default function ApplicationIndex({vacancies}) {
     ]
 
     return (
-        <GuestLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Permohonan Kerja Kosong
-                </h2>
-            }
-        >
-            <Head title="Dashboard" />
+        <GuestLayout wide>
+            <Head title="Permohonan Jawatan" />
 
-            {/* <Head title="Complete Registration" /> */}
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <form onSubmit={submit}>  
+            <div className="py-8">
+                <div className="mx-auto max-w-5xl sm:px-6 lg:px-8">
+            <form onSubmit={submit}>
+                        <div className="mb-6 rounded-xl border border-border bg-card p-6 shadow-sm">
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <p className="text-xs font-semibold uppercase tracking-wider text-primary">Borang Permohonan</p>
+                                    <h1 className="mt-1 text-2xl font-semibold text-foreground">Permohonan Jawatan Kosong</h1>
+                                    <p className="mt-1 text-sm text-muted-foreground">
+                                        Ruangan bertanda <span className="font-semibold text-destructive">*</span> adalah wajib diisi.
+                                    </p>
+                                </div>
+                                <p className="text-sm font-medium text-muted-foreground">
+                                    Langkah {currentPart} daripada {totalParts}
+                                </p>
+                            </div>
+
+                            <div className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                <div
+                                    className="h-full rounded-full bg-primary transition-all duration-300"
+                                    style={{ width: `${(currentPart / totalParts) * 100}%` }}
+                                />
+                            </div>
+
+                            <ol className="mt-4 hidden grid-cols-8 gap-2 md:grid">
+                                {STEPS.map((label, index) => {
+                                    const step = index + 1;
+                                    const isDone = step < currentPart;
+                                    const isActive = step === currentPart;
+                                    return (
+                                        <li key={label} className="flex flex-col items-center text-center">
+                                            <span
+                                                className={cn(
+                                                    'flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold',
+                                                    isDone && 'bg-primary text-white',
+                                                    isActive && 'bg-background text-primary ring-2 ring-primary',
+                                                    !isDone && !isActive && 'bg-muted text-muted-foreground'
+                                                )}
+                                            >
+                                                {isDone ? '✓' : step}
+                                            </span>
+                                            <span className={cn('mt-1.5 text-xs leading-tight', isActive ? 'font-semibold text-foreground' : 'text-muted-foreground')}>
+                                                {label}
+                                            </span>
+                                        </li>
+                                    );
+                                })}
+                            </ol>
+                            <p className="mt-3 text-sm font-semibold text-foreground md:hidden">{STEPS[currentPart - 1]}</p>
+                        </div>
+
                         {submitStatus.type === 'error' && submitStatus.message && (
-                            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                            <div role="alert" className="mb-4 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
                                 {submitStatus.message}
                             </div>
                         )}
                         {Object.keys(clientErrors).length > 0 && (
-                            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                Sila lengkapkan ruangan bertanda <span className="font-bold text-red-600">*</span>.
+                            <div role="alert" className="mb-4 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                                Sila lengkapkan ruangan bertanda <span className="font-bold text-destructive">*</span> sebelum meneruskan.
                             </div>
                         )}
                         {/* part 1 */}
-                        <div className="overflow-hidden bg-white shadow-lg sm:rounded-2xl p-4">
+                        <div className="overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm">
                             {currentPart === 1 && (
                                 <div>
-                                    <p className='text-sm font-bold underline'>Permohonan Bagi Jawatan (Sila Pilih)
-                                        <span className="text-red-500">*</span></p>
+                                    <p className='text-sm font-semibold text-muted-foreground'>Permohonan Bagi Jawatan (Sila Pilih)
+                                        <span className="text-destructive">*</span></p>
                                     <RadioGroup
                                         name="vacancy_uuid"
                                         value={data.vacancy_uuid}
@@ -596,22 +734,22 @@ export default function ApplicationIndex({vacancies}) {
                                     />
 
                                     {!data.vacancy_uuid && (
-                                        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                                        <div className="mt-4 rounded-md border border-highlight/40 bg-highlight/10 px-4 py-3 text-sm text-accent-foreground">
                                             Sila pilih jawatan terlebih dahulu untuk memaparkan borang maklumat peribadi.
                                         </div>
                                     )}
 
                                     {data.vacancy_uuid && (
                                     <>
-                                    <p className='font-bold'>Bahagian 1 : Maklumat Peribadi</p>
+                                    <SectionHeading number="1" title="Maklumat Peribadi" />
                                     <div className='mt-4 space-y-2'>
-                                        <p className='text-sm font-bold underline'>Maklumat Peribadi</p>
+                                        <p className='text-sm font-semibold text-muted-foreground'>Maklumat Peribadi</p>
                                         <div className="grid flex-1 gap-1 md:grid-cols-1">
                                             <InputLabel
                                                 //  htmlFor="vacancies_title"
                                                 value={
                                                 <>
-                                                    Nama<span className="text-red-500">*</span>
+                                                    Nama<span className="text-destructive">*</span>
                                                 </>
                                                 }
                                                 />
@@ -640,7 +778,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        Nombor Kad Pengenalan<span className="text-red-500">*</span>
+                                                        Nombor Kad Pengenalan<span className="text-destructive">*</span>
                                                     </>
                                                     }
                                                     />
@@ -649,12 +787,19 @@ export default function ApplicationIndex({vacancies}) {
                                                     name="ic_number"
                                                     value={data.ic_number}
                                                     className="block w-full"
-                                                    isFocused={true}
+                                                    inputMode="numeric"
+                                                    placeholder="000000-00-0000"
+                                                    maxLength={14}
                                                     onChange={(e) =>
-                                                        setData('ic_number', e.target.value)
-                                                    } 
+                                                        handleIcNumberChange(e.target.value)
+                                                    }
                                                     required
                                                 />
+                                                {icAlert ? (
+                                                    <p className="text-sm text-destructive">{icAlert}</p>
+                                                ) : (
+                                                    <p className="text-xs text-muted-foreground">Umur dan tarikh lahir akan diisi secara automatik.</p>
+                                                )}
                                                 <InputError
                                                     message={errors.ic_number || clientErrors.ic_number}
                                                     className="mt-2"
@@ -666,7 +811,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        Umur(Tahun)<span className="text-red-500">*</span>
+                                                        Umur(Tahun)<span className="text-destructive">*</span>
                                                     </>
                                                     }
                                                     required
@@ -690,7 +835,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     </InputGroupAddon>
                                                 </InputGroup>
                                                 {ageAlert === true && (
-                                                <div className="rounded text-sm text-red-500 font-normal">Sila masukkan umur yang betul</div>
+                                                <div className="rounded text-sm text-destructive font-normal">Sila masukkan umur yang betul</div>
                                                 )}
                                                 <InputError
                                                     message={errors.age || clientErrors.age}
@@ -703,7 +848,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        Tarikh Lahir<span className="text-red-500">*</span>
+                                                        Tarikh Lahir<span className="text-destructive">*</span>
                                                     </>
                                                     }
                                                 />
@@ -712,7 +857,7 @@ export default function ApplicationIndex({vacancies}) {
                                                             <button
                                                                 type="button"
                                                                 className={cn(
-                                                                    " h-9 w-full text-left text-sm bg-white border border-gray-300 rounded-md px-3 py-2",
+                                                                    " h-9 w-full text-left text-sm bg-background border border-border rounded-md px-3 py-2",
                                                                     !data.dateOfBirth && "text-muted-foreground"
                                                                 )}
                                                             >
@@ -748,7 +893,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        Jantina<span className="text-red-500">*</span>
+                                                        Jantina<span className="text-destructive">*</span>
                                                     </>
                                                     }
                                                     />
@@ -773,7 +918,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        Status Perkahwinan<span className="text-red-500">*</span>
+                                                        Status Perkahwinan<span className="text-destructive">*</span>
                                                     </>
                                                 }
                                                     />
@@ -801,7 +946,7 @@ export default function ApplicationIndex({vacancies}) {
                                                 //  htmlFor="vacancies_title"
                                                 value={
                                                 <>
-                                                    Bangsa<span className="text-red-500">*</span>
+                                                    Bangsa<span className="text-destructive">*</span>
                                                 </>
                                                 }
                                                 />
@@ -853,7 +998,7 @@ export default function ApplicationIndex({vacancies}) {
                                                 //  htmlFor="vacancies_title"
                                                 value={
                                                 <>
-                                                    Alamat Tetap<span className="text-red-500">*</span>
+                                                    Alamat Tetap<span className="text-destructive">*</span>
                                                 </>
                                             }
                                                 />
@@ -903,7 +1048,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        No.Telefon Bimbit (0123456789)<span className="text-red-500">*</span>
+                                                        No.Telefon Bimbit (0123456789)<span className="text-destructive">*</span>
                                                     </>
                                                 }
                                                     />
@@ -952,7 +1097,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        E-Mel<span className="text-red-500">*</span>
+                                                        E-Mel<span className="text-destructive">*</span>
                                                     </>
                                                 }
                                                     />
@@ -979,7 +1124,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        Jangkaan Gaji(RM)<span className="text-red-500">*</span>
+                                                        Jangkaan Gaji(RM)<span className="text-destructive">*</span>
                                                     </>
                                                 }
                                                     />
@@ -988,10 +1133,12 @@ export default function ApplicationIndex({vacancies}) {
                                                     <InputGroupInput
                                                         id="expected_salary "
                                                         name="expected_salary"
+                                                        inputMode="decimal"
+                                                        placeholder="0.00"
                                                         value={data.expected_salary}
                                                         className="block w-full"
                                                         onChange={(e) =>
-                                                            setData('expected_salary', e.target.value)
+                                                            setData('expected_salary', sanitizeCurrency(e.target.value))
                                                         }
                                                     />
                                                     <InputGroupAddon >
@@ -1008,7 +1155,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                     <>
-                                                        Jangkaan Tarikh Masuk<span className="text-red-500">*</span>
+                                                        Jangkaan Tarikh Masuk<span className="text-destructive">*</span>
                                                     </>
                                                 }
                                                     />
@@ -1017,7 +1164,7 @@ export default function ApplicationIndex({vacancies}) {
                                                             <button
                                                                 type="button"
                                                                 className={cn(
-                                                                    "mt-0 h-9 w-full text-left text-sm bg-white border border-gray-300 rounded-md px-3 py-2",
+                                                                    "mt-0 h-9 w-full text-left text-sm bg-background border border-border rounded-md px-3 py-2",
                                                                     !data.start_date && "text-muted-foreground"
                                                                 )}
                                                             >
@@ -1056,9 +1203,9 @@ export default function ApplicationIndex({vacancies}) {
                             {/* part 2 */}
                             {currentPart === 2 && (
                                 <div>
-                                    <p className='font-bold'>Bahagian 2 : Maklumat Keluarga</p>
+                                    <SectionHeading number="2" title="Maklumat Keluarga" />
                                     <div className='mt-4'>
-                                        <p className='text-sm font-bold underline'>Tambahan Maklumat Keluarga</p>
+                                        <p className='text-sm font-semibold text-muted-foreground'>Tambahan Maklumat Keluarga</p>
                                             <ApplicationFamily onAddFamilyMember={handleAddFamilyMember} />                                  
                                     </div>
                                     <DataTable columns={familycolumns} data={familyMembers} className='mt-4'/>
@@ -1068,15 +1215,15 @@ export default function ApplicationIndex({vacancies}) {
                             {/* part 3 */}
                             {currentPart === 3 && (
                                 <div>
-                                    <p className='font-bold'>Bahagian 3 : Maklumat Pendidikan</p>
+                                    <SectionHeading number="3" title="Maklumat Pendidikan" />
                                     <div className='flex'>
-                                        <span class='flex items-center bg-lime-200 border border-success-subtle text-gray-700 text-sm font-medium px-1.5 py-0.5 rounded'>
-                                        <span class="h-1.5 w-1.5 bg-lime-600 rounded-full me-1"></span>
+                                        <span className='mt-2 inline-flex items-center rounded-md border border-primary/20 bg-accent px-2.5 py-1 text-sm font-medium text-accent-foreground'>
+                                        <span className="me-2 h-1.5 w-1.5 rounded-full bg-primary"></span>
                                             Sila masukkan pendidikan dari sekolah menengah
                                         </span>
                                     </div>
                                     <div className='mt-4'>
-                                        <p className='text-sm font-bold underline'>Tambahan Maklumat Pendidikan</p>
+                                        <p className='text-sm font-semibold text-muted-foreground'>Tambahan Maklumat Pendidikan</p>
                                         <ApplicationEducation onAddEducation={handleAddEducation} />
                                     </div>
                                     <DataTable columns={educationcolumns} data={education} className='mt-4'/>
@@ -1090,9 +1237,9 @@ export default function ApplicationIndex({vacancies}) {
                             {/* part 4 */}
                             {currentPart === 4 && (
                                 <div>
-                                    <p className='font-bold'>Bahagian 4 : Maklumat Pekerjaan</p>
+                                    <SectionHeading number="4" title="Maklumat Pekerjaan" />
                                     <div className='mt-4'>
-                                        <p className='text-sm font-bold underline'>Tambahan Maklumat Pekerjaan</p>
+                                        <p className='text-sm font-semibold text-muted-foreground'>Tambahan Maklumat Pekerjaan</p>
                                         <ApplicationEmployer onAddEmployer={handleAddEmployer} />
                                     </div>
                                     <DataTable columns={employercolumns} data={employers} className='mt-4'/>
@@ -1102,9 +1249,34 @@ export default function ApplicationIndex({vacancies}) {
                             {/* part 5 */}
                             {currentPart === 5 && (
                                 <div>
-                                    <p className='font-bold'>Bahagian 5 : Maklumat Tambahan Pekerjaan Terkini</p>
-                                    <div className='mt-4 space-y-4'>
-                                        <p className='text-sm font-bold underline'>Tambahan Maklumat Pekerjaan</p>
+                                    <SectionHeading number="5" title="Maklumat Tambahan Pekerjaan Terkini" />
+                                    <div className='mt-4 space-y-2'>
+                                        <InputLabel
+                                            value={
+                                                <>
+                                                    Sedang Bekerja?<span className="text-destructive">*</span>
+                                                </>
+                                            }
+                                        />
+                                        <RadioGroup
+                                            name="currently_employed"
+                                            value={data.currently_employed}
+                                            onChange={handleCurrentlyEmployedChange}
+                                            options={[
+                                                { value: 'Ya', label: 'Ya' },
+                                                { value: 'Tidak', label: 'Tidak' },
+                                            ]}
+                                            columns={2}
+                                        />
+                                        <InputError
+                                            message={errors.currently_employed || clientErrors.currently_employed}
+                                            className="mt-2"
+                                        />
+                                    </div>
+
+                                    {data.currently_employed === 'Ya' && (
+                                    <div className='mt-6 space-y-4'>
+                                        <p className='text-sm font-semibold text-muted-foreground'>Tambahan Maklumat Pekerjaan</p>
                                             <div className="grid flex-1 gap-2 md:grid-cols-2">
                                             <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
@@ -1118,11 +1290,12 @@ export default function ApplicationIndex({vacancies}) {
                                                 <TextInput
                                                     id="salary"
                                                     name="salary"
+                                                    inputMode="decimal"
+                                                    placeholder="0.00"
                                                     value={data.salary}
                                                     className="block w-full"
-                                                    isFocused={true}
                                                     onChange={(e) =>
-                                                        setData('salary', e.target.value)
+                                                        setData('salary', sanitizeCurrency(e.target.value))
                                                 }                        
                                                  />
                                                 <InputError
@@ -1143,11 +1316,12 @@ export default function ApplicationIndex({vacancies}) {
                                                 <TextInput
                                                     id="allowance"
                                                     name="allowance"
+                                                    inputMode="decimal"
+                                                    placeholder="0.00"
                                                     value={data.allowance}
                                                     className="block w-full"
-                                                    isFocused={true}
                                                     onChange={(e) =>
-                                                        setData('allowance', e.target.value)
+                                                        setData('allowance', sanitizeCurrency(e.target.value))
                                                 }                        
                                                  />
                                                 <InputError
@@ -1171,7 +1345,6 @@ export default function ApplicationIndex({vacancies}) {
                                                     name="report_to"
                                                     value={data.report_to}
                                                     className="block w-full"
-                                                    isFocused={true}
                                                     onChange={(e) =>
                                                         setData('report_to', e.target.value)
                                                 }                           
@@ -1196,7 +1369,6 @@ export default function ApplicationIndex({vacancies}) {
                                                     name="report_count"
                                                     value={data.report_count}
                                                     className="block w-full"
-                                                    isFocused={true}
                                                     onChange={(e) =>
                                                         setData('report_count', e.target.value)
                                                 }                           
@@ -1221,7 +1393,6 @@ export default function ApplicationIndex({vacancies}) {
                                                     name="notice_period"
                                                     value={data.notice_period}
                                                     className="block w-full"
-                                                    isFocused={true}
                                                     onChange={(e) =>
                                                         setData('notice_period', e.target.value)
                                                 }                           
@@ -1230,8 +1401,9 @@ export default function ApplicationIndex({vacancies}) {
                                                     message={errors.notice_period}
                                                     className="mt-2"    
                                                  />
-                                            </div>                                      
+                                            </div>
                                     </div>
+                                    )}
                                 </div>
                             )}
 
@@ -1239,13 +1411,13 @@ export default function ApplicationIndex({vacancies}) {
                             {currentPart === 6 && (
                                 <div>
                                     <div className='mt-4 space-y-4'>
-                                    <p className='font-bold'>Bahagian 6 : Penguasaan Bahasa</p>            
+                                    <SectionHeading number="6" title="Penguasaan Bahasa" />
                                             <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Penguasaan Bahasa Melayu<span className="text-red-500">*</span>
+                                                    Penguasaan Bahasa Melayu<span className="text-destructive">*</span>
                                                  </>
                                                 }
                                                  />
@@ -1271,7 +1443,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Penguasaan Bahasa Inggeris<span className="text-red-500">*</span>
+                                                    Penguasaan Bahasa Inggeris<span className="text-destructive">*</span>
                                                  </>
                                                 }
                                                  />
@@ -1333,7 +1505,7 @@ export default function ApplicationIndex({vacancies}) {
                                     </div>
                                 
                                     <div className='mt-4 space-y-4'>    
-                                    <p className='font-bold'>Bahagian 7 : Maklumat Lain</p>
+                                    <SectionHeading number="7" title="Maklumat Lain" />
                                             <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
                                                     //  htmlFor="vacancies_title"
@@ -1341,7 +1513,7 @@ export default function ApplicationIndex({vacancies}) {
                                                  <>
                                                     1)Adakah anda pernah didakwa dan disabitkan dalam mana-mana mahkamah
                                                     undang-undang untuk kesalahan jenayah atau Kesalahan dibawah Akta Dadah
-                                                    Berbahaya 1952? <span className="text-red-500">*</span>
+                                                    Berbahaya 1952? <span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1379,7 +1551,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    2)Adakah anda diisytiharkan bankrap?<span className="text-red-500">*</span>
+                                                    2)Adakah anda diisytiharkan bankrap?<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1405,7 +1577,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     value={
                                                  <>
                                                     3)Adakah anda terlibat dalam sebarang usaha perniagaan,
-                                                    termasuk perniagaan keluarga?<span className="text-red-500">*</span>
+                                                    termasuk perniagaan keluarga?<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1442,7 +1614,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    4)Adakah anda mempunyai lesen memandu? (jika ya, nyatakan kelas apa)<span className="text-red-500">*</span>
+                                                    4)Adakah anda mempunyai lesen memandu? (jika ya, nyatakan kelas apa)<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1479,7 +1651,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    5)Adakah anda seorang perokok?<span className="text-red-500">*</span>
+                                                    5)Adakah anda seorang perokok?<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1504,7 +1676,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    6)Adakah anda seorang peminum arak?<span className="text-red-500">*</span>
+                                                    6)Adakah anda seorang peminum arak?<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1527,13 +1699,13 @@ export default function ApplicationIndex({vacancies}) {
                                     </div>
 
                                     <div className='mt-4 space-y-4'>
-                                    <p className='font-bold'>Bahagian 8 : Perubatan & Keadaan Fizikal</p>            
+                                    <SectionHeading number="8" title="Perubatan & Keadaan Fizikal" />
                                             <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    1) Pernahkah anda atau sedang mengalami sebarang penyakit?<span className="text-red-500">*</span>
+                                                    1) Pernahkah anda atau sedang mengalami sebarang penyakit?<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1572,7 +1744,7 @@ export default function ApplicationIndex({vacancies}) {
                                                     //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    2) Adakah anda mengalami kecacatan fizikal? (jika ya, nyatakan butiran)<span className="text-red-500">*</span>
+                                                    2) Adakah anda mengalami kecacatan fizikal? (jika ya, nyatakan butiran)<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1651,13 +1823,13 @@ export default function ApplicationIndex({vacancies}) {
                             {currentPart === 7 && (
                                 <div>
                                     <div className='mt-4 space-y-4'>
-                                    <p className='font-bold'>Bahagian 9 : Kemahiran/ Bakat/ Hobi</p>            
+                                    <SectionHeading number="9" title="Kemahiran/ Bakat/ Hobi" />
                                             <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Nama Kemahiran/ Bakat/ Hobi<span className="text-red-500">*</span>
+                                                    Nama Kemahiran/ Bakat/ Hobi<span className="text-destructive">*</span>
                                                  </>
                                                 }
                                                  />
@@ -1678,13 +1850,13 @@ export default function ApplicationIndex({vacancies}) {
                                     </div>
                                 
                                     <div className='mt-4 space-y-4'>    
-                                    <p className='font-bold'>Bahagian 10 : Maklumat Orang Perlu Dihubungi Semasa Kecemasan</p>
+                                    <SectionHeading number="10" title="Maklumat Orang Perlu Dihubungi Semasa Kecemasan" />
                                             <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Nama<span className="text-red-500">*</span>
+                                                    Nama<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1707,7 +1879,7 @@ export default function ApplicationIndex({vacancies}) {
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Hubungan<span className="text-red-500">*</span>
+                                                    Hubungan<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1730,7 +1902,7 @@ export default function ApplicationIndex({vacancies}) {
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    No.Telefon<span className="text-red-500">*</span>
+                                                    No.Telefon<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1751,15 +1923,15 @@ export default function ApplicationIndex({vacancies}) {
                                     </div>
 
                                     <div className='mt-4 space-y-4'>
-                                    <p className='font-bold'>Bahagian 11 : Rujukan (Selain Keluarga)</p>
+                                    <SectionHeading number="11" title="Rujukan (Selain Keluarga)" />
                                     <div className='mt-2'>
-                                        <p className='text-sm font-bold underline'>Rujukan Pertama</p>            
+                                        <p className='text-sm font-semibold text-muted-foreground'>Rujukan Pertama</p>            
                                             <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Nama<span className="text-red-500">*</span>
+                                                    Nama<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1783,7 +1955,7 @@ export default function ApplicationIndex({vacancies}) {
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    No.Telefon<span className="text-red-500">*</span>
+                                                    No.Telefon<span className="text-destructive">*</span>
                                                  </>
                                              }
                                                  />
@@ -1807,7 +1979,7 @@ export default function ApplicationIndex({vacancies}) {
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Nama Syarikat<span className="text-red-500">*</span>
+                                                    Nama Syarikat<span className="text-destructive">*</span>
                                                  </>
                                             }
                                                  />
@@ -1831,7 +2003,7 @@ export default function ApplicationIndex({vacancies}) {
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Jawatan<span className="text-red-500">*</span>
+                                                    Jawatan<span className="text-destructive">*</span>
                                                  </>
                                                 }
                                                  />
@@ -1853,13 +2025,13 @@ export default function ApplicationIndex({vacancies}) {
                                     </div>
                                     </div>
                                     {/* <div className='mt-4 space-y-4'>
-                                    <p className='font-bold'>Resume atau Sijil</p>
+                                    <SectionHeading title="Resume atau Sijil" />
                                     <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Muat Nail Fail Resume atau sijil-sijil yang berkaitan (jika ada) <span className="text-red-500">*</span>
+                                                    Muat Nail Fail Resume atau sijil-sijil yang berkaitan (jika ada) <span className="text-destructive">*</span>
                                                  </>
                                             }
                                                  />
@@ -1880,13 +2052,13 @@ export default function ApplicationIndex({vacancies}) {
                                            </div> 
                                     </div> */}
                                     <div className='mt-4 space-y-4'>
-                                    <p className='font-bold'>Gambar Passport</p>
+                                    <SectionHeading title="Gambar Passport" />
                                     <div className="grid flex-1 gap-1 md:grid-cols-1">
                                                 <InputLabel
                                                 //  htmlFor="vacancies_title"
                                                     value={
                                                  <>
-                                                    Muat Nail Fail Gambar berukuran passport <span className="text-red-500">*</span>
+                                                    Muat Nail Fail Gambar berukuran passport <span className="text-destructive">*</span>
                                                  </>
                                             }
                                                  />
@@ -1914,7 +2086,7 @@ export default function ApplicationIndex({vacancies}) {
                             {currentPart === 8 && (
                                 <div>
                                     <div className='mt-4 space-y-4'>
-                                    <p className='font-bold'>Ringkasan Permohonan</p>                        
+                                    <SectionHeading title="Ringkasan Permohonan" />
                                     </div>
 
                                     <div>
@@ -1922,7 +2094,7 @@ export default function ApplicationIndex({vacancies}) {
                                         <div>
                                         <div className='flex flex-col md:flex-row'>
                                             <div className='md:w-1/5'>
-                                                <div className="mt-4 w-48 overflow-hidden border border-slate-200 rounded">
+                                                <div className="mt-4 w-48 overflow-hidden border border-border rounded">
                                                     {resumePreviewUrl ? (
                                                     <img
                                                         src={resumePreviewUrl}
@@ -1930,7 +2102,7 @@ export default function ApplicationIndex({vacancies}) {
                                                         className="w-full h-full object-contain rounded"
                                                     />
                                                     ) : (
-                                                        <p className="text-sm text-slate-500">No attachment available.</p>
+                                                        <p className="text-sm text-muted-foreground">No attachment available.</p>
                                                     )}
                                                 </div>
                                             </div>
@@ -2218,25 +2390,25 @@ export default function ApplicationIndex({vacancies}) {
                                                 <div className='mt-4'>
                                                 <p className='text-l font-bold'>Penguasaan Bahasa</p>
                                                 </div>
-                                                <table className="w-full border-collapse border border-gray-400 mt-4">
+                                                <table className="w-full border-collapse border border-border mt-4">
                                                     <thead>
                                                         <tr>
-                                                            <th className="border border-gray-900 bg-gray-200 w-1/2">NAMA BAHASA</th>
-                                                            <th className="border border-gray-900 bg-gray-200 w-1/2">STATUS PENGUASAAN</th>
+                                                            <th className="border border-border px-3 py-2 text-left bg-muted w-1/2">NAMA BAHASA</th>
+                                                            <th className="border border-border px-3 py-2 text-left bg-muted w-1/2">STATUS PENGUASAAN</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr>
-                                                            <td className="border border-gray-900 w-1/2">Bahasa Melayu</td>
-                                                            <td className="border border-gray-900 w-1/2">{parsed.language_malay}</td>
+                                                            <td className="border border-border px-3 py-2 text-left w-1/2">Bahasa Melayu</td>
+                                                            <td className="border border-border px-3 py-2 text-left w-1/2">{parsed.language_malay}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="border border-gray-900 w-1/2">Bahasa Inggeris</td>
-                                                            <td className="border border-gray-900 w-1/2">{parsed.language_english}</td>
+                                                            <td className="border border-border px-3 py-2 text-left w-1/2">Bahasa Inggeris</td>
+                                                            <td className="border border-border px-3 py-2 text-left w-1/2">{parsed.language_english}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="border border-gray-900 w-1/2">Bahasa lain(jika ada):{parsed.other_language ?? "-"}</td>
-                                                            <td className="border border-gray-900 w-1/2">{parsed.language ?? "-"}</td>
+                                                            <td className="border border-border px-3 py-2 text-left w-1/2">Bahasa lain(jika ada):{parsed.other_language ?? "-"}</td>
+                                                            <td className="border border-border px-3 py-2 text-left w-1/2">{parsed.language ?? "-"}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -2417,7 +2589,7 @@ export default function ApplicationIndex({vacancies}) {
                                         {/* part 8 : rujukan waris */}
                                         <div>
                                             <div>
-                                                <div className="mt-4 border-t border-gray-500 pt-4">
+                                                <div className="mt-4 border-t border-border pt-4">
                                                 <p className='text-l font-bold'>Orang untuk dihubungi jika berlaku kecemasan</p>
                                                 </div>
                                                 <div className='grid flex-1 gap-2 my-2'>
@@ -2466,7 +2638,7 @@ export default function ApplicationIndex({vacancies}) {
             
                                         {/* part 9: rujukan */}
                                         <div>
-                                            <div className="mt-4 border-t border-gray-500 pt-4">  
+                                            <div className="mt-4 border-t border-border pt-4">  
                                                 <p className='text-l font-bold'>Rujukan</p>                                    
                                                 <div className='grid flex-1 gap-2 my-2'>
                                                     <div className=''>
@@ -2527,7 +2699,7 @@ export default function ApplicationIndex({vacancies}) {
                                         </div>
                                     </div>
 
-                                    <div className='p-3 bg-green-100 rounded-xl text-center'>
+                                    <div className='p-3 bg-accent rounded-xl text-center'>
                                         <p>Pihak tuan/puan perlu menghantar salinan sijil-sijil / dokumen pendidikan / dokumen sokongan yang berkaitan secara fizikal melalui pos dengan kos tangungan sendiri ke :<br/></p>
                                         <p className='font-bold'>
                                             Bahagian Pentadbiran,<br/>
@@ -2541,14 +2713,15 @@ export default function ApplicationIndex({vacancies}) {
                             )}
 
                         </div>
-                        <div className="flex justify-between mt-6">
-                            <PrimaryButton
+                        <div className="mt-6 flex items-center justify-between">
+                            <button
+                                type="button"
                                 onClick={handlePrev}
                                 disabled={currentPart === 1}
-                                className="px-4 py-2 bg-blue-500 rounded disabled:opacity-50"
+                                className="inline-flex items-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                Sebelumnya
-                            </PrimaryButton>
+                                ← Sebelumnya
+                            </button>
                             {/* {allAnswered && (
                                 <button
                                     onClick={handleSubmit}
@@ -2559,26 +2732,26 @@ export default function ApplicationIndex({vacancies}) {
                             )} */}
                             {currentPart === totalParts && (
                                 <PrimaryButton
-                                    onClick={submit}
-                                    // disabled={currentPart === totalParts}
-                                    className="px-4 py-2 bg-black text-white rounded disabled:opacity-50"
+                                    type="submit"
+                                    disabled={processing}
+                                    className="px-5 py-2 text-sm"
                                 >
-                                    Hantar
+                                    {processing ? 'Menghantar...' : 'Hantar Permohonan'}
                                 </PrimaryButton>
                             )}
                             {currentPart !== totalParts && (
                                 <PrimaryButton
+                                    type="button"
                                     onClick={handleNext}
-                                    disabled={currentPart === totalParts}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                                    className="px-5 py-2 text-sm"
                                 >
-                                    Seterusnya
+                                    Seterusnya →
                                 </PrimaryButton>
                             )}
                             {/* <PrimaryButton
                                 onClick={handleNext}
                                 disabled={currentPart === totalParts}
-                                className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                                className="px-4 py-2 bg-primary text-white rounded disabled:opacity-50"
                             >
                                 Seterusnya
                             </PrimaryButton> */}

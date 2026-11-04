@@ -101,7 +101,7 @@ export default function ApplicationFamily({onAddFamilyMember}) {
                                     htmlFor="family_name"
                                     value={
                                         <>
-                                            Nama<span className="text-red-500">*</span>
+                                            Nama<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -128,7 +128,7 @@ export default function ApplicationFamily({onAddFamilyMember}) {
                                     htmlFor="vacancies_location"
                                     value={
                                         <>
-                                            Hubungan<span className="text-red-500">*</span>
+                                            Hubungan<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -154,7 +154,7 @@ export default function ApplicationFamily({onAddFamilyMember}) {
                                     // htmlFor="vacancies_description"
                                     value={
                                         <>
-                                            Umur<span className="text-red-500">*</span>
+                                            Umur<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />

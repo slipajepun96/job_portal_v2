@@ -1,19 +1,11 @@
 import { forwardRef } from 'react';
+import { Button } from '@/Components/ui/button';
 
-const PrimaryButton = forwardRef(({ className = '', disabled, children, ...props }, ref) => {
+const PrimaryButton = forwardRef(({ className = '', children, ...props }, ref) => {
     return (
-        <button
-            {...props}
-            ref={ref}
-            className={
-                `inline-flex items-center rounded-lg border border-transparent bg-cyan-700 px-3 py-1.5 font-semibold text-white transition duration-150 ease-in-out hover:bg-cyan-800 focus:bg-cyan-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 ${
-                    disabled && 'opacity-25'
-                } ` + className
-            }
-            disabled={disabled}
-        >
+        <Button ref={ref} className={className} {...props}>
             {children}
-        </button>
+        </Button>
     );
 });
 

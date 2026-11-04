@@ -105,7 +105,7 @@ export default function ApplicationEducation({onAddEducation}) {
                                     // htmlFor="vacancies_title"
                                     value={
                                         <>
-                                            Nama Sekolah/IPT<span className="text-red-500">*</span>
+                                            Nama Sekolah/IPT<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -133,7 +133,7 @@ export default function ApplicationEducation({onAddEducation}) {
                                     // htmlFor="vacancies_location"
                                     value={
                                         <>
-                                            Tahun Mula<span className="text-red-500">*</span>
+                                            Tahun Mula<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -163,7 +163,7 @@ export default function ApplicationEducation({onAddEducation}) {
                                     // htmlFor="vacancies_location"
                                     value={
                                         <>
-                                            Tahun Akhir<span className="text-red-500">*</span>
+                                            Tahun Akhir<span className="text-destructive">*</span>
                                         </>
                                     }
                                  />
@@ -191,7 +191,7 @@ export default function ApplicationEducation({onAddEducation}) {
                                  //  htmlFor="vacancies_title"
                                 value={
                              <>
-                                Tahap Pendidikan<span className="text-red-500">*</span>
+                                Tahap Pendidikan<span className="text-destructive">*</span>
                              </>
                             }
                              />

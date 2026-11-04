@@ -24,10 +24,15 @@ export default function Register() {
 
     return (
         <RegisterLayout>
-            <Head title="Register" />
+            <Head title="Daftar" />
+
+            <div className="mb-6 space-y-1">
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground">Daftar Akaun</h1>
+                <p className="text-sm text-muted-foreground">Cipta akaun pentadbir baharu.</p>
+            </div>
 
             <form onSubmit={submit}>
-                <div className="border border-gray-300 p-4 rounded-xl bg-white mb-8 m-8 mt-4 md:mt-8">
+                <div>
                 <div>
                     <InputLabel htmlFor="name" value="Nama" />
 
@@ -46,7 +51,7 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="Emel" />
 
                     <TextInput
                         id="email"
@@ -121,10 +126,10 @@ export default function Register() {
                     />
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="mt-6 flex items-center justify-between">
                     <Link
                         href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="rounded-md text-sm font-medium text-primary underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                         Sudah mendaftar?
                     </Link>

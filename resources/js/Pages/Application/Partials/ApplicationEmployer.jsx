@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { cn } from "@/lib/utils";
+import { cn, sanitizeCurrency } from "@/lib/utils";
 import { format } from "date-fns";
 
 
@@ -108,7 +108,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     // htmlFor="vacancies_title"
                                     value={
                                         <>
-                                            Nama Majikan<span className="text-red-500">*</span>
+                                            Nama Majikan<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -136,7 +136,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     // htmlFor="vacancies_location"
                                     value={
                                         <>
-                                            Jawatan<span className="text-red-500">*</span>
+                                            Jawatan<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -164,7 +164,7 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     // htmlFor="vacancies_location"
                                     value={
                                         <>
-                                            Tahun Mula Bekerja<span className="text-red-500">*</span>
+                                            Tahun Mula Bekerja<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
@@ -220,18 +220,20 @@ export default function ApplicationEmployer({onAddEmployer}) {
                                     // htmlFor="vacancies_location"
                                     value={
                                         <>
-                                            Gaji Akhir(RM)<span className="text-red-500">*</span>
+                                            Gaji Akhir(RM)<span className="text-destructive">*</span>
                                         </>
                                     }
                                 />
                                 <TextInput
                                     id="final_salary"
                                     name="final_salary"
+                                    inputMode="decimal"
+                                    placeholder="0.00"
                                     value={data.final_salary}
                                     className="block w-full"
                                     isFocused={true}
                                     onChange={(e) =>
-                                        setData('final_salary', e.target.value)
+                                        setData('final_salary', sanitizeCurrency(e.target.value))
                                     }
                                     required
                                 />

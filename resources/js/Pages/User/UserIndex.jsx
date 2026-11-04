@@ -2,12 +2,12 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import DataTable from '@/Components/DataTable';
 import { Link } from '@inertiajs/react';
-import PrimaryButton from '@/Components/PrimaryButton';
+import { Button } from '@/Components/ui/button';
+import { UserPlus } from 'lucide-react';
 import DeleteUser from './Partials/DeleteUser';
 import { useState, useEffect} from 'react';
 
 export default function User({user}) {
-console.log(user);
     const columns = [
         // { Header: 'Nama', accessor: 'allottee_name' },
         // { Header: 'No. Fail / Geran', accessor: 'lot_file_num' },
@@ -26,7 +26,7 @@ console.log(user);
             accessor: ['designation'],
             Cell: ({ row }) => (
                 <div className="flex flex-col">
-                    <div className='font-semibold'>{row.designation}</div> 
+                    <div className='text-muted-foreground'>{row.designation}</div> 
                 </div>
             ),
         },
@@ -36,7 +36,7 @@ console.log(user);
             accessor: ['created_at'],
             Cell: ({ row }) => (
                 <div className="flex flex-col">
-                    <div className='font-semibold'>{formatDateTime(row.created_at)}</div> 
+                    <div className='tabular-nums text-muted-foreground'>{formatDateTime(row.created_at)}</div> 
                 </div>
             ),
 
@@ -81,34 +81,28 @@ console.log(user);
     return (
         <AuthenticatedLayout
             header={ 
-            <>
-            <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Penguna
-            </h2>
-
-            
-                
-            </>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2>Pengguna</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Urus akaun pentadbir sistem.</p>
+                </div>
+                <Button asChild>
+                    <Link href={route('register')}>
+                        <UserPlus /> Daftar Pengguna
+                    </Link>
+                </Button>
+            </div>
             }
         >
-            <Head title="Dashboard" />
+            <Head title="Pengguna" />
 
            
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <Link href={route('register')}
-                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                        >
-                            {<PrimaryButton
-                                className="mt-4 px-3 py-2 text-white bg-orange-400 rounded-md hover:bg-red-200"
-                            >
-                                Register
-                            </PrimaryButton>}
-                        </Link>
-                        <div className="p-6 text-gray-900">
-                            <DataTable columns={columns} data={user} className='mt-4'/>
+            <div className="py-8">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+                        <div className="p-6">
+                            <DataTable columns={columns} data={user} />
                         </div>
                     </div>
                 </div>

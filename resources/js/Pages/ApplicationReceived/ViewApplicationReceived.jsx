@@ -3,6 +3,8 @@ import { Head } from '@inertiajs/react';
 import DataTablePrintView from '@/Components/DataTablePrintView';
 import { Link } from '@inertiajs/react';
 import PrimaryButton from '@/Components/PrimaryButton';
+import SectionHeading from '@/Components/SectionHeading';
+import Alert from '@/Components/Alert';
 import { useState, useEffect} from 'react';
 import InputLabel from '@/Components/InputLabel';
 import ValueView from '@/Components/ValueView';
@@ -76,7 +78,7 @@ console.log(parsed);
             Cell: ({ row }) => (
                 <div className="flex items-center space-x-2">
                     <div className='font-normal text-sm'>{row.start_school}</div> 
-                    <span className="text-gray-950">-</span>
+                    <span className="text-foreground">-</span>
                     <div className='font-normal text-sm'>{row.end_school}</div>
                 </div>
             ),
@@ -116,7 +118,7 @@ console.log(parsed);
             Cell: ({ row }) => (
                 <div className="flex items-center space-x-2">
                     <div className='font-normal text-sm'>{row.start_year}</div> 
-                    <span className="text-gray-950">-</span>
+                    <span className="text-foreground">-</span>
                     <div className='font-normal text-sm'>{row.end_year}</div>
                 </div>
             ),
@@ -174,34 +176,34 @@ console.log(parsed);
         <AuthenticatedLayout
             header={
                 <div className="flex items-center gap-2">
-                    <button 
+                    <button
+                        type="button"
                         onClick={() => window.history.back()}
-                        className="hover:bg-gray-100 rounded px-1 transition-colors"
+                        className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                        aria-label="Kembali"
                     >
-                        <ChevronLeft className="w-7 h-7" />
+                        <ChevronLeft className="h-6 w-6" />
                     </button>
                     {/* <Link
                         href={route('applicationReceived')}
-                        className="hover:bg-gray-100 rounded px-1 transition-colors"
+                        className="hover:bg-muted rounded px-1 transition-colors"
                     >
                         <ChevronLeft className="w-7 h-7" />
                     </Link> */}
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Maklumat Pemohon
-                </h2>
+                    <h2>Maklumat Pemohon</h2>
                 </div>
             }
         >
-            <Head title="Dashboard" />
+            <Head title="Maklumat Pemohon" />
 
-            <div className="py-12">
+            <div className="py-8">
                 
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+                        <div className="p-6 text-foreground">
                             {successMessage && (
-                                <div className="p-4 bg-green-300 rounded-lg shadow-md mb-3">
-                                    Berjaya Dipadam!
+                                <div className="mb-4">
+                                    <Alert type="success" message="Berjaya dipadam." />
                                 </div>
 
                             )}
@@ -210,7 +212,7 @@ console.log(parsed);
                             <div>
                             <div className='flex flex-col md:flex-row'>
                                 <div className='md:w-1/5'>
-                                    <div className="mt-4 w-48 overflow-hidden border border-slate-200 rounded">
+                                    <div className="mt-4 w-48 overflow-hidden border border-border rounded">
                                         {parsed.resume ? (
                                         <img
                                             src={route('application.resume', application.id)}
@@ -218,7 +220,7 @@ console.log(parsed);
                                             className="w-full h-full object-contain rounded"
                                         />
                                         ) : (
-                                            <p className="text-sm text-slate-500">No attachment available.</p>
+                                            <p className="p-4 text-sm text-muted-foreground">Tiada lampiran.</p>
                                         )}
                                     </div>
                                 </div>
@@ -402,21 +404,21 @@ console.log(parsed);
                             <div>
                                 <div>
                                     <div className='mt-4'>
-                                    <p className='text-l font-bold'>Butiran Keluarga</p>
+                                    <SectionHeading title="Butiran Keluarga" />
                                     </div>
                                     <DataTablePrintView columns={familycolumns} data={parsed.familyMembers ?? []} className='mt-4'/>
                                 </div>
 
                                 <div>
                                     <div className='mt-4'>
-                                    <p className='text-l font-bold'>Taraf Pendidikan</p>
+                                    <SectionHeading title="Taraf Pendidikan" />
                                     </div>
                                     <DataTablePrintView columns={educationcolumns} data={parsed.education ?? []} className='mt-4'/>
                                 </div>
 
                                 <div>
                                     <div className='mt-4'>
-                                    <p className='text-l font-bold'>Pengalaman Bekerja</p>
+                                    <SectionHeading title="Pengalaman Bekerja" />
                                     </div>
                                     <DataTablePrintView columns={employercolumns} data={parsed.employers ?? []} className='mt-4'/>
                                 </div>
@@ -504,27 +506,27 @@ console.log(parsed);
                             <div>
                                 <div>
                                     <div className='mt-4'>
-                                    <p className='text-l font-bold'>Penguasaan Bahasa</p>
+                                    <SectionHeading title="Penguasaan Bahasa" />
                                     </div>
-                                    <table className="w-full border-collapse border border-gray-400 mt-4">
+                                    <table className="w-full border-collapse border border-border mt-4">
                                         <thead>
                                             <tr>
-                                                <th className="border border-gray-900 bg-gray-200 w-1/2">NAMA BAHASA</th>
-                                                <th className="border border-gray-900 bg-gray-200 w-1/2">STATUS PENGUASAAN</th>
+                                                <th className="border border-border px-3 py-2 text-left bg-muted w-1/2">NAMA BAHASA</th>
+                                                <th className="border border-border px-3 py-2 text-left bg-muted w-1/2">STATUS PENGUASAAN</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td className="border border-gray-900 w-1/2">Bahasa Melayu</td>
-                                                <td className="border border-gray-900 w-1/2">{parsed.language_malay}</td>
+                                                <td className="border border-border px-3 py-2 text-left w-1/2">Bahasa Melayu</td>
+                                                <td className="border border-border px-3 py-2 text-left w-1/2">{parsed.language_malay}</td>
                                             </tr>
                                             <tr>
-                                                <td className="border border-gray-900 w-1/2">Bahasa Inggeris</td>
-                                                <td className="border border-gray-900 w-1/2">{parsed.language_english}</td>
+                                                <td className="border border-border px-3 py-2 text-left w-1/2">Bahasa Inggeris</td>
+                                                <td className="border border-border px-3 py-2 text-left w-1/2">{parsed.language_english}</td>
                                             </tr>
                                             <tr>
-                                                <td className="border border-gray-900 w-1/2">Bahasa lain(jika ada):{parsed.other_language ?? "-"}</td>
-                                                <td className="border border-gray-900 w-1/2">{parsed.language ?? "-"}</td>
+                                                <td className="border border-border px-3 py-2 text-left w-1/2">Bahasa lain(jika ada):{parsed.other_language ?? "-"}</td>
+                                                <td className="border border-border px-3 py-2 text-left w-1/2">{parsed.language ?? "-"}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -536,7 +538,7 @@ console.log(parsed);
                             <div>
                                 <div>
                                     <div className='mt-4'>
-                                    <p className='text-l font-bold'>Maklumat Lain</p>
+                                    <SectionHeading title="Maklumat Lain" />
                                     </div>
                                     <div className='grid flex-1 gap-2 my-2'>
                                         <div className=''>
@@ -632,7 +634,7 @@ console.log(parsed);
                             <div>
                                 <div>
                                     <div className='mt-4'>
-                                    <p className='text-l font-bold'>Perubatan & Keadaan Fizikal</p>
+                                    <SectionHeading title="Perubatan & Keadaan Fizikal" />
                                     </div>
                                     <div className='grid flex-1 gap-2 my-2'>
                                         <div className=''>
@@ -683,7 +685,7 @@ console.log(parsed);
                             <div>
                                 <div>
                                     <div className='mt-4'>
-                                    <p className='text-l font-bold'>Kemahiran/Bakat/Hobi</p>
+                                    <SectionHeading title="Kemahiran/Bakat/Hobi" />
                                     </div>
                                     <div className='grid flex-1 gap-2 my-2'>
                                         <div className=''>
@@ -703,8 +705,8 @@ console.log(parsed);
                             {/* part 8 : rujukan waris */}
                             <div>
                                 <div>
-                                    <div className="mt-4 border-t border-gray-500 pt-4">
-                                    <p className='text-l font-bold'>Orang untuk dihubungi jika berlaku kecemasan</p>
+                                    <div className="mt-4 border-t border-border pt-4">
+                                    <SectionHeading title="Orang untuk dihubungi jika berlaku kecemasan" />
                                     </div>
                                     <div className='grid flex-1 gap-2 my-2'>
                                         <div className=''>
@@ -752,8 +754,8 @@ console.log(parsed);
 
                             {/* part 9: rujukan */}
                             <div>
-                                <div className="mt-4 border-t border-gray-500 pt-4">  
-                                    <p className='text-l font-bold'>Rujukan</p>                                    
+                                <div className="mt-4 border-t border-border pt-4">  
+                                    <SectionHeading title="Rujukan" />
                                     <div className='grid flex-1 gap-2 my-2'>
                                         <div className=''>
                                             <InputLabel

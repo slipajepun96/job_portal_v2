@@ -38,6 +38,22 @@ class Vacancy extends Model
         'ads_link',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
+        ];
+    }
+
+    /**
+     * Vacancies that are currently accepting applications.
+     */
+    public function scopeOpen($query)
+    {
+        return $query->where('start_date', '<=', now())->where('end_date', '>=', now());
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

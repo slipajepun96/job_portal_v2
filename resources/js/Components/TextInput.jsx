@@ -1,4 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { Input } from '@/Components/ui/input';
+import { cn } from '@/lib/utils';
 
 export default forwardRef(function TextInput(
     { type = 'text', className = '', isFocused = false, formatNumber = false, ...props },
@@ -50,13 +52,10 @@ export default forwardRef(function TextInput(
 
 
     return (
-        <input
+        <Input
             {...props}
-            type={type} 
-            className={
-                'h-9 text-sm font-normal rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ' +
-                className
-            }
+            type={type}
+            className={cn('bg-background', className)}
             ref={localRef}
             value={displayValue}
             onChange={handleChange}

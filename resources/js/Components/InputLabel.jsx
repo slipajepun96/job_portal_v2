@@ -1,3 +1,6 @@
+import { Label } from '@/Components/ui/label';
+import { cn } from '@/lib/utils';
+
 export default function InputLabel({
     value,
     className = '',
@@ -5,14 +8,8 @@ export default function InputLabel({
     ...props
 }) {
     return (
-        <label
-            {...props}
-            className={
-                `block text-sm font-medium text-gray-700 ` +
-                className
-            }
-        >
+        <Label {...props} className={cn('mb-1.5 block text-foreground/90', className)}>
             {value ? value : children}
-        </label>
+        </Label>
     );
 }

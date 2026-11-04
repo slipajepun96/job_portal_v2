@@ -33,8 +33,12 @@ class VacancyController extends Controller
             'vacancies_title' => 'required|string|max:255',
             'vacancies_location' => 'required|string|max:255',
             'vacancies_description' => 'nullable|string',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_date' => 'required|date_format:Y-m-d H:i',
+            'end_date' => 'required|date_format:Y-m-d H:i|after:start_date',
+        ], [
+            'start_date.required' => 'Sila pilih tarikh dan masa mula.',
+            'end_date.required' => 'Sila pilih tarikh dan masa tutup.',
+            'end_date.after' => 'Tarikh dan masa tutup mesti selepas tarikh dan masa mula.',
             'ads_link' => 'required|url', 
         ]);
         // dd($validated);

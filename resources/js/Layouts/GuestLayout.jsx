@@ -1,25 +1,31 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
+import { cn } from '@/lib/utils';
 
-export default function GuestLayout({ children }) {
+export default function GuestLayout({ children, wide = false }) {
     return (
-        <div className="bg-gray-50 text-black/50" style={{
-                backgroundImage: `
-                    radial-gradient(125% 125% at 50% 90%, #ffffff 40%, #3ABCC2 100%)
-                `,
-                backgroundSize: "100% 100%",
-                }}> 
-        <div className="flex flex-col items-center pt-6 sm:justify-center sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="fill-current text-gray-500" />
-                </Link>
-            </div>
+        <div className="flex min-h-screen flex-col bg-muted/40">
+            <header className="bg-primary text-primary-foreground">
+                <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+                    <Link href="/" className="rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-highlight">
+                        <ApplicationLogo />
+                    </Link>
+                </div>
+            </header>
 
-            <div className="mt-2 w-full overflow-hidden px-6 py-4 shadow-md sm:rounded-lg">
-                {children}
-            </div>
-        </div>
+            <main className={cn('mx-auto w-full flex-1 px-4 py-10 sm:px-6', wide ? 'max-w-7xl lg:px-8' : 'max-w-md')}>
+                {wide ? (
+                    children
+                ) : (
+                    <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8">
+                        {children}
+                    </div>
+                )}
+            </main>
+
+            <footer className="border-t border-border bg-background py-4 text-center text-xs text-muted-foreground">
+                © {new Date().getFullYear()} PKPP Agro Sdn. Bhd. Hak Cipta Terpelihara.
+            </footer>
         </div>
     );
 }

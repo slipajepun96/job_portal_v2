@@ -1,188 +1,156 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import ApplicationLogo from '@/Components/ApplicationLogo';
+import { Badge } from '@/Components/ui/badge';
+import { Button } from '@/Components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Head, Link } from '@inertiajs/react';
+import { ArrowRight, Briefcase, CheckCircle2, Clock, ExternalLink, MapPin } from 'lucide-react';
 
-export default function Welcome({ auth, canResetPassword, status, vacancies, success }) {
-    const [formType, setFormType] = useState('login'); // 'login', 'register', or 'admin'
-
-    // console.log(vacancies);
-    const handleImageError = () => {
-        document
-            .getElementById('screenshot-container')
-            ?.classList.add('!hidden');
-        document.getElementById('docs-card')?.classList.add('!row-span-1');
-        document
-            .getElementById('docs-card-content')
-            ?.classList.add('!flex-row');
-        document.getElementById('background')?.classList.add('!hidden');
-    };
-
-    const { data, setData, post, processing, errors, reset } = useForm({
-        vendor_contact_person: '',
-        vendor_email: '',
-        password: '',
-        password_confirmation: '',
-    });
-
-    const switchForm = (type) => {
-        reset();
-        setFormType(type);
-    };
-
-    // const [vacancies, setvacancies] = useState([]);
-
-    // const submitLogin = (e) => {
-    //     e.preventDefault();
-
-    //     post(route('vendor.login.store'), {
-    //         preserveScroll: true,
-    //         preserveState: (page) => Object.keys(page.props.errors).length,
-    //         onFinish: () => reset('password'),
-    //     });
-    // };
-
-    // const submitRegister = (e) => {
-    //     e.preventDefault();
-
-    //     post(route('vendor.register.store'), {
-    //         preserveScroll: true,
-    //         preserveState: (page) => Object.keys(page.props.errors).length,
-    //         onFinish: () => reset('password', 'password_confirmation'),
-    //     });
-    // };
-
+export default function Welcome({ auth, vacancies, success }) {
     return (
         <>
-            <Head title="Welcome" />
-            <div className="bg-gray-50 text-black/50" style={{
-                backgroundImage: `
-                    radial-gradient(125% 125% at 50% 90%, #ffffff 40%, #3ABCC2 100%)
-                `,
-                backgroundSize: "100% 100%",
-                }}> 
-
-                <div className="relative flex min-h-screen flex-col items-center justify-center">
-                    <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                        <nav className="-mx-3 flex flex-1 justify-end">
-                                {auth.user ? (
-                                    <Link
-                                        href={route('dashboard')}
-                                        className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                ) : (
-                                    <>
-
-                                <Link
-                                    href={route('login')}
-                                    className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                >
-                                    Log in
-                                </Link>
-
-                                <Link
-                                    href={route('register')}
-                                    className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                >
-                                    Register
-                                </Link>
+            <Head title="Portal Kerjaya" />
+            <div className="flex min-h-screen flex-col bg-muted/40">
+                <header className="bg-primary text-primary-foreground">
+                    <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                        <Link href="/">
+                            <ApplicationLogo />
+                        </Link>
+                        <nav className="flex items-center gap-2">
+                            {auth.user ? (
+                                <Button asChild variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-primary-foreground">
+                                    <Link href={route('dashboard')}>Papan Pemuka</Link>
+                                </Button>
+                            ) : (
+                                <>
+                                    <Button asChild variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-primary-foreground">
+                                        <Link href={route('login')}>Log Masuk</Link>
+                                    </Button>
+                                    <Button asChild variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-primary-foreground">
+                                        <Link href={route('register')}>Daftar</Link>
+                                    </Button>
                                 </>
-                                )}
-                        </nav>
-
-
-
-                        <main className="mt-6">
-                            {success && (
-                                <div className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-                                    {success}
-                                    <div className='p-3 bg-green-100 rounded-xl text-center'>
-                                        <p>Pihak tuan/puan perlu menghantar salinan sijil-sijil / dokumen pendidikan / dokumen sokongan yang berkaitan secara fizikal melalui pos dengan kos tangungan sendiri ke :<br/></p>
-                                        <p className='font-bold'>
-                                            Bahagian Pentadbiran,<br/>
-                                            Ibu Pejabat PKPP Agro Sdn. Bhd.<br/>
-                                            KM 4 Jalan Selendang,<br/>
-                                            26800 Kuala Rompin,<br/>
-                                            Pahang Darul Makmur
-                                        </p>
-                                    </div>
-                                </div>
                             )}
-                            <section className=" ">
-                                <div className=" py-2 md:py-8 px-2 md:mx-auto md:max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
-                                    <div className="flex flex-col justify-center">
-                                        <h1 className="mb-2 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl">Portal Kerjaya</h1>
-                                        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl">PKPP Agro Sdn. Bhd.</p>
-                                        <div className='grid grid-cols-1 gap-2'>
-                                           
-                                            <p className="mb-2 text-sm font-normal text-gray-950">Berminat ? Sila klik butang di bawah untuk mengisi borang permohonan</p>
-                                            <div className='bg-green-300 p-2 rounded-lg text-center text-amber-500 font-semibold'>
-                                            <Link
-                                                href={route('application')}
-                                                className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                            >
-                                            Mohon Sekarang    
-                                            </Link>
-                                            </div>
-                                        </div>
-                                        {/* <div className='mt-4'>
-                                            Daftar sebagai vendor PKPP Agro Sdn. Bhd. sebagai kelayakan untuk menyertai sebut harga & tender yang dibuka oleh PKPP Agro Sdn. Bhd.
-                                        </div> */}
-                                    </div>
-                                    <div>
-                                        <div className="w-full lg:max-w-xl md:p-6 md:space-y-8 sm:p-8 md:bg-white rounded-lg md:shadow-xl md:border md:border-gray-200">
-                                            <h2 className="text-2xl font-bold text-gray-900">
-                                                {/* {formType === 'register' ? 'Daftar Sebagai Vendor' : formType === 'admin' ? 'Log Masuk Pentadbir' : 'Log Masuk Vendor'} */}
-                                            </h2>
-
-                                            <div>
-                                                {/* {vacancies[0].vacancies_title} */}
-                                                {vacancies.length === 0? "Tiada": null}
-                                                {vacancies.length > 0 && (
-                                                <div className="mt-6">
-                                                    <h3 className="text-lg text-gray-900 font-bold mb-4">Senarai Kerja Kosong Sedang Dibuka</h3>
-                                                    <div className="grid gap-2">
-                                                        {vacancies.map((vacancy) => (
-                                                            <div key={vacancy.id} className="border rounded-lg p-4 bg-gray-50">
-                                                                <div className="flex justify-between items-start">
-                                                                    <div className="grid gap-2 flex-1">
-                                                                        <div>
-                                                                            <p className="font-medium text-gray-900">{vacancy.vacancies_title}</p>
-                                                                        </div>
-                                                                        <div>
-                                                                            <p className="font-medium">{vacancy.vacancies_location}</p>
-                                                                        </div>
-                                                                        <div>
-                                                                            <a href={vacancy.ads_link} target="_blank">                                                            
-                                                                                <PrimaryButton className="text-gray-900 ml-2 cursor-pointer">
-                                                                                    Iklan
-                                                                                </PrimaryButton>
-                                                                            </a>                                                                            
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>    
-                                                )}
-                                            </div>                                       
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </main>
+                        </nav>
                     </div>
-                </div>
+                </header>
+
+                <section className="bg-primary text-primary-foreground">
+                    <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-10 sm:px-6 lg:grid-cols-2 lg:px-8 lg:pb-24 lg:pt-16">
+                        <div className="flex flex-col justify-center">
+                            {/* <Badge className="mb-4 w-fit border-transparent bg-highlight/15 text-highlight hover:bg-highlight/15">
+                                Jawatan kosong kini dibuka
+                            </Badge> */}
+                            <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+                                Bina kerjaya anda bersama <span className="text-highlight">PKPP Agro</span>
+                            </h1>
+                            <p className="mt-4 max-w-xl text-lg text-primary-foreground/75">
+                                Lihat jawatan yang sedang ditawarkan dan hantar permohonan anda secara dalam talian dalam beberapa langkah mudah.
+                            </p>
+                            <div className="mt-8 flex flex-wrap gap-3">
+                                <Button asChild size="lg" className="bg-highlight text-highlight-foreground hover:bg-highlight/90">
+                                    <Link href={route('application')}>
+                                        Mohon Sekarang <ArrowRight />
+                                    </Link>
+                                </Button>
+                                <Button asChild size="lg" variant="outline" className="border-white/30 bg-transparent text-primary-foreground hover:bg-white/10 hover:text-primary-foreground">
+                                    <a href="#jawatan">Lihat Jawatan</a>
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="hidden items-center justify-center lg:flex">
+                            <div className="grid w-full max-w-md grid-cols-2 gap-4">
+                                <div className="col-span-2 rounded-2xl border border-white/10 bg-white/5 p-6">
+                                    <p className="text-sm text-primary-foreground/70">Jawatan dibuka</p>
+                                    <p className="mt-1 text-5xl font-bold text-highlight">{vacancies.length}</p>
+                                </div>
+                                {['Isi borang dalam talian', 'Semak & hantar'].map((step, i) => (
+                                    <div key={step} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-highlight text-sm font-semibold text-highlight-foreground">
+                                            {i + 1}
+                                        </span>
+                                        <p className="mt-3 text-sm font-medium">{step}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <main id="jawatan" className="mx-auto w-full max-w-7xl flex-1 px-4 py-12 sm:px-6 lg:px-8">
+                    {success && (
+                        <Card className="mb-8 border-primary/20 bg-accent">
+                            <CardHeader className="flex-row items-start gap-3 space-y-0">
+                                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                                <div>
+                                    <CardTitle className="text-base text-accent-foreground">{success}</CardTitle>
+                                    <CardDescription className="mt-2 text-accent-foreground/80">
+                                        Pihak tuan/puan perlu menghantar salinan sijil-sijil / dokumen pendidikan / dokumen sokongan yang berkaitan secara fizikal melalui pos dengan kos tanggungan sendiri ke:
+                                    </CardDescription>
+                                    <p className="mt-2 text-sm font-semibold text-accent-foreground">
+                                        Bahagian Pentadbiran, Ibu Pejabat PKPP Agro Sdn. Bhd.,<br />
+                                        KM 4 Jalan Selendang, 26800 Kuala Rompin, Pahang Darul Makmur
+                                    </p>
+                                </div>
+                            </CardHeader>
+                        </Card>
+                    )}
+
+                    <div className="mb-6 flex items-end justify-between gap-4">
+                        <div>
+                            <h2 className="text-2xl font-semibold tracking-tight text-foreground">Senarai Kerja Kosong</h2>
+                            <p className="mt-1 text-sm text-muted-foreground">Jawatan yang sedang dibuka untuk permohonan.</p>
+                        </div>
+                    </div>
+
+                    {vacancies.length === 0 ? (
+                        <Card>
+                            <CardContent className="flex flex-col items-center py-12 text-center">
+                                <Briefcase className="h-10 w-10 text-muted-foreground" />
+                                <p className="mt-3 font-medium text-foreground">Tiada jawatan kosong buat masa ini</p>
+                                <p className="mt-1 text-sm text-muted-foreground">Sila semak semula kemudian.</p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {vacancies.map((vacancy) => (
+                                <Card key={vacancy.id} className="flex flex-col transition hover:border-primary/40 hover:shadow-md">
+                                    <CardHeader>
+                                        <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary">
+                                            <Briefcase className="h-5 w-5" />
+                                        </div>
+                                        <CardTitle className="text-lg">{vacancy.vacancies_title}</CardTitle>
+                                        <CardDescription className="flex items-center gap-1.5">
+                                            <MapPin className="h-3.5 w-3.5" />
+                                            {vacancy.vacancies_location}
+                                        </CardDescription>
+                                        <CardDescription className="flex items-center gap-1.5">
+                                            <Clock className="h-3.5 w-3.5" />
+                                            Tutup {new Date(vacancy.end_date).toLocaleString('ms-MY', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="mt-auto flex gap-2">
+                                        <Button asChild className="flex-1">
+                                            <Link href={route('application')}>Mohon</Link>
+                                        </Button>
+                                        {vacancy.ads_link && (
+                                            <Button asChild variant="outline">
+                                                <a href={vacancy.ads_link} target="_blank" rel="noreferrer">
+                                                    Iklan <ExternalLink />
+                                                </a>
+                                            </Button>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
+                </main>
+
+                <footer className="border-t border-border bg-background py-6 text-center text-sm text-muted-foreground">
+                    © {new Date().getFullYear()} PKPP Agro Sdn. Bhd. Hak Cipta Terpelihara.
+                </footer>
             </div>
-            <footer className="text-center text-sm text-black border-t py-4">
-            | PKPP Agro Sdn Bhd © 2025 Hak Cipta Terpelihara
-            </footer>
         </>
     );
 }

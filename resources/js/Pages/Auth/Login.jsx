@@ -23,17 +23,22 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <LoginLayout>
-            <Head title="Log in" />
+            <Head title="Log Masuk" />
+
+            <div className="mb-6 space-y-1">
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground">Log Masuk</h1>
+                <p className="text-sm text-muted-foreground">Masukkan emel dan kata laluan anda untuk meneruskan.</p>
+            </div>
 
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div className="mb-4 rounded-md border border-primary/20 bg-accent px-4 py-3 text-sm font-medium text-accent-foreground">
                     {status}
                 </div>
             )}
         <div className=''>
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="Emel" />
 
                     <TextInput
                         id="email"
@@ -50,7 +55,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value="Kata Laluan" />
 
                     <TextInput
                         id="password"
@@ -74,23 +79,23 @@ export default function Login({ status, canResetPassword }) {
                                 setData('remember', e.target.checked)
                             }
                         />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
+                        <span className="ms-2 text-sm text-muted-foreground">
+                            Ingat saya
                         </span>
                     </label>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="mt-6 flex items-center justify-between">
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="rounded-md text-sm font-medium text-primary underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             Lupa kata laluan?
                         </Link>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <PrimaryButton className="ms-auto" disabled={processing}>
                         Log Masuk
                     </PrimaryButton>
                 </div>

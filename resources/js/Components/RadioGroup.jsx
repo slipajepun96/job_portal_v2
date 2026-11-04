@@ -38,10 +38,10 @@ export default forwardRef(function RadioGroup(
                     />
                     <label 
                         htmlFor={`${name}_${option.value}`}
-                        className="inline-flex items-center justify-center w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-500 peer-checked:text-white hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                        className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-lg border border-input bg-background px-4 py-3 text-center text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:bg-accent hover:text-accent-foreground peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
                     >                           
                         <div className="block">
-                            <div className="w-full text-md font-semibold">
+                            <div className="w-full text-sm font-medium">
                                 {option.label}
                             </div>
                         </div>

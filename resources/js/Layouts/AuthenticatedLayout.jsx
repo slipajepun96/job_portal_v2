@@ -1,9 +1,33 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/Components/ui/dropdown-menu';
 import { Link, usePage } from '@inertiajs/react';
+import { ChevronDown, Info, LogOut, Menu, User, X } from 'lucide-react';
 import { useState } from 'react';
+
+const navItems = [
+    { route: 'dashboard', label: 'Utama' },
+    { route: 'user', label: 'Pengguna' },
+    { route: 'vacancy', label: 'Kerja Kosong' },
+    { route: 'applicationReceived', label: 'Senarai Permohonan' },
+];
+
+function initials(name = '') {
+    return name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0].toUpperCase())
+        .join('');
+}
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -12,95 +36,73 @@ export default function AuthenticatedLayout({ header, children }) {
         useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-blue-800">
+        <div className="min-h-screen bg-muted/40">
+            <nav className="bg-primary text-primary-foreground shadow-sm">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    <ApplicationLogo />
                                 </Link>
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    Utama
-                                </NavLink>
-                                <NavLink
-                                    href={route('user')}
-                                    active={route().current('user')}
-                                >
-                                    Pengguna
-                                </NavLink>
-
-                                <NavLink
-                                    href={route('vacancy')}
-                                    active={route().current('vacancy')}
-                                >
-                                    Kerja Kosong
-                                </NavLink>
-
-                                <NavLink
-                                    href={route('applicationReceived')}
-                                    active={route().current('applicationReceived')}
-                                >
-                                    Senarai Permohonan
-                                </NavLink>
+                                {navItems.map((item) => (
+                                    <NavLink
+                                        key={item.route}
+                                        href={route(item.route)}
+                                        active={route().current(item.route)}
+                                    >
+                                        {item.label}
+                                    </NavLink>
+                                ))}
                             </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center gap-2 rounded-full py-1 pe-3 ps-1 text-sm font-medium text-primary-foreground transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-highlight"
+                                    >
+                                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-highlight text-xs font-semibold text-highlight-foreground">
+                                            {initials(user.name)}
                                         </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
-                                            Profil
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route('about.us')}
-                                        >
-                                            Tentang Kami
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
+                                        {user.name}
+                                        <ChevronDown className="h-4 w-4 opacity-70" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-56">
+                                    <DropdownMenuLabel className="font-normal">
+                                        <div className="text-sm font-medium">{user.name}</div>
+                                        <div className="truncate text-xs text-muted-foreground">{user.email}</div>
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <Link href={route('profile.edit')} className="cursor-pointer">
+                                            <User className="me-2 h-4 w-4" /> Profil
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link href={route('about.us')} className="cursor-pointer">
+                                            <Info className="me-2 h-4 w-4" /> Tentang Kami
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <Link
                                             href={route('logout')}
                                             method="post"
                                             as="button"
+                                            className="w-full cursor-pointer text-destructive focus:text-destructive"
                                         >
-                                            Log Keluar
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
+                                            <LogOut className="me-2 h-4 w-4" /> Log Keluar
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
 
                         <div className="-me-2 flex items-center sm:hidden">
@@ -110,37 +112,10 @@ export default function AuthenticatedLayout({ header, children }) {
                                         (previousState) => !previousState,
                                     )
                                 }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                className="inline-flex items-center justify-center rounded-md p-2 text-primary-foreground/80 transition hover:bg-white/10 hover:text-primary-foreground focus:outline-none"
+                                aria-label="Menu"
                             >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
+                                {showingNavigationDropdown ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                             </button>
                         </div>
                     </div>
@@ -153,41 +128,23 @@ export default function AuthenticatedLayout({ header, children }) {
                     }
                 >
                     <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                        >
-                            Utama
-                        </ResponsiveNavLink>
-
-                        <ResponsiveNavLink
-                            href={route('user')}
-                            active={route().current('user')}
-                        >
-                            Pengguna
-                        </ResponsiveNavLink>
-
-                        <ResponsiveNavLink
-                            href={route('vacancy')}
-                            active={route().current('vacancy')}
-                        >
-                            Kerja kosong
-                        </ResponsiveNavLink>
-
-                        <ResponsiveNavLink
-                            href={route('applicationReceived')}
-                            active={route().current('applicationReceived')}
-                        >
-                            Senarai Permohonan
-                        </ResponsiveNavLink>
+                        {navItems.map((item) => (
+                            <ResponsiveNavLink
+                                key={item.route}
+                                href={route(item.route)}
+                                active={route().current(item.route)}
+                            >
+                                {item.label}
+                            </ResponsiveNavLink>
+                        ))}
                     </div>
 
-                    <div className="border-t border-gray-200 pb-1 pt-4">
+                    <div className="border-t border-white/15 pb-1 pt-4">
                         <div className="px-4">
-                            <div className="text-base font-medium text-gray-800">
+                            <div className="text-base font-medium text-primary-foreground">
                                 {user.name}
                             </div>
-                            <div className="text-sm font-medium text-gray-500">
+                            <div className="text-sm font-medium text-primary-foreground/70">
                                 {user.email}
                             </div>
                         </div>
@@ -212,8 +169,8 @@ export default function AuthenticatedLayout({ header, children }) {
             </nav>
 
             {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <header className="border-b border-border bg-background">
+                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-foreground">
                         {header}
                     </div>
                 </header>
