@@ -36,6 +36,10 @@ class Vacancy extends Model
         'start_date',
         'end_date',
         'ads_link',
+        'ai_summary',
+        'ai_summary_status',
+        'ai_summary_error',
+        'ai_summarized_at',
     ];
 
     protected function casts(): array
@@ -43,6 +47,8 @@ class Vacancy extends Model
         return [
             'start_date' => 'datetime',
             'end_date' => 'datetime',
+            'ai_summary' => 'array',
+            'ai_summarized_at' => 'datetime',
         ];
     }
 
@@ -62,6 +68,11 @@ class Vacancy extends Model
     protected $hidden = [
         'password',
         'remember_token',
+        // AI summary contains applicant names; only shown on the recruiter page.
+        'ai_summary',
+        'ai_summary_status',
+        'ai_summary_error',
+        'ai_summarized_at',
     ];    
 
     // public function roles(): BelongsToMany

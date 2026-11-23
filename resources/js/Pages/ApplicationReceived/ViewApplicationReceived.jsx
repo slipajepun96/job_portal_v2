@@ -9,9 +9,11 @@ import { useState, useEffect} from 'react';
 import InputLabel from '@/Components/InputLabel';
 import ValueView from '@/Components/ValueView';
 import { ChevronLeft } from 'lucide-react';
+import ApplicationAiReview from './Partials/ApplicationAiReview';
+import ApplicationComments from './Partials/ApplicationComments';
 // import ApplicationDelete from './Partials/ApplicationDelete';
 
-export default function ViewApplicationReceived({application, success}) {
+export default function ViewApplicationReceived({application, success, error}) {
 
     // const vacancyTitle = ''
     // // return <h1>test</h1>;
@@ -203,9 +205,14 @@ console.log(parsed);
                         <div className="p-6 text-foreground">
                             {successMessage && (
                                 <div className="mb-4">
-                                    <Alert type="success" message="Berjaya dipadam." />
+                                    <Alert key={success} type="success" message={success} />
                                 </div>
 
+                            )}
+                            {error && (
+                                <div className="mb-4">
+                                    <Alert key={error} type="error" message={error} />
+                                </div>
                             )}
                             
                             {/* part 1 : butiran peribadi */}
@@ -814,6 +821,15 @@ console.log(parsed);
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+
+                    <div className="mt-6 grid gap-6 lg:grid-cols-5">
+                        <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm lg:col-span-3">
+                            <ApplicationAiReview application={application} />
+                        </div>
+                        <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm lg:col-span-2">
+                            <ApplicationComments application={application} />
                         </div>
                     </div>
                 </div>

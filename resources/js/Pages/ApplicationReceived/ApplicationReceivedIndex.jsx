@@ -8,10 +8,11 @@ import { useState, useEffect} from 'react';
 // import ApplicationIndex from './Application/ApplicationIndex';
 import ViewApplicationReceived from './ViewApplicationReceived';
 import ApplicationDelete from './Partials/ApplicationDelete';
+import VacancyAiSummary from './Partials/VacancyAiSummary';
 import { Eye, Paperclip, Printer } from 'lucide-react';
 import { ChevronLeft } from 'lucide-react';
 
-export default function ApplicationReceivedIndex({applications, vacancies, success, backRoute}) {
+export default function ApplicationReceivedIndex({applications, vacancies, vacancy, success, backRoute}) {
 
     const vacancyTitle = ''
 
@@ -145,7 +146,8 @@ function getVacancyTitle(vacancy_uuid)
         >
             <Head title="Senarai Permohonan" />
             <div className="py-8">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+                    {vacancy && <VacancyAiSummary vacancy={vacancy} applicationCount={applications.length} />}
                     <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
                         <div className="p-6">
                             {successMessage && (

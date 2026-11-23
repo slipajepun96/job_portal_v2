@@ -34,12 +34,26 @@ class Application extends Authenticatable
         'vacancy_uuid',
         'application_snapshot',
         'candidate_nric',
+        'ai_review',
+        'ai_reviewed_at',
     ];
 
       protected function casts(): array
     {
         return [
             'application_snapshot' => 'array',
+            'ai_review' => 'array',
+            'ai_reviewed_at' => 'datetime',
         ];
+    }
+
+    public function vacancy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Vacancy::class, 'vacancy_uuid');
+    }
+
+    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ApplicationComment::class)->latest();
     }
 }

@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Vacancy;
 use App\Models\Application;
+use App\Jobs\SummariseVacancyApplications;
 
 
 class DashboardController extends Controller
@@ -35,8 +36,21 @@ class DashboardController extends Controller
         return Inertia::render('ApplicationReceived/ApplicationReceivedIndex', [
             'applications' => $applications,
             'vacancies' => $vacancies,
+            'vacancy' => Vacancy::findOrFail($id)->makeVisible(['ai_summary', 'ai_summary_status', 'ai_summary_error', 'ai_summarized_at']),
             'backRoute'=>"dashboard",
         ]);
+    }
+
+    public function summariseApplicants($id): RedirectResponse
+    {
+        $vacancy = Vacancy::findOrFail($id);
+
+        if ($vacancy->ai_summary_status !== 'processing') {
+            $vacancy->update(['ai_summary_status' => 'processing', 'ai_summary_error' => null]);
+            SummariseVacancyApplications::dispatch($vacancy->id);
+        }
+
+        return Redirect::route('viewApplicantList', $vacancy->id);
     }
 
     public function aboutUs()

@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     //dashboard
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/application-received/{id}', [DashboardController::class, 'viewApplicantList'])->name('viewApplicantList');
+    Route::post('/application-received/{id}/ai-summary', [DashboardController::class, 'summariseApplicants'])->name('vacancy.aiSummary');
 
     //user
     Route::get('/user', [UserController::class, 'userIndex'])->name('user');
@@ -47,6 +48,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/application-received', [ApplicationController::class, 'applicationReceivedIndex'])->name('applicationReceived');
     Route::get('/application-received/view/{id}', [ApplicationController::class, 'viewApplicationReceived'])->name('viewApplicationReceived');
     Route::post('/application-received/delete', [ApplicationController::class, 'deleteApplication'])->name('application.delete');
+    Route::post('/application-received/{id}/comments', [ApplicationController::class, 'addComment'])->name('application.comment.add');
+    Route::delete('/application-received/{id}/comments/{commentId}', [ApplicationController::class, 'deleteComment'])->name('application.comment.delete');
+    Route::post('/application-received/{id}/ai-review', [ApplicationController::class, 'aiReview'])->name('application.aiReview');
     Route::get('/application-received/resume/{id}', [ApplicationController::class, 'applicationAttachment'])->name('application.resume');
     
     //download

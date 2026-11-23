@@ -16,6 +16,9 @@ use Spatie\LaravelPdf\Facades\Pdf;
 use function Spatie\LaravelPdf\Support\pdf;
 use Spatie\LaravelPdf\Enums\Format;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use App\Models\ApplicationComment;
+use App\Services\ApplicationAiReviewer;
 
 class ApplicationController extends Controller
 {
@@ -119,10 +122,55 @@ class ApplicationController extends Controller
     //papar 
     public function viewApplicationReceived($id): Response
     {
-        $application = Application::findOrFail($id);
+        $application = Application::with(['vacancy', 'comments.user:id,name'])->findOrFail($id);
         return Inertia::render('ApplicationReceived/ViewApplicationReceived', [
             'application' => $application,
+            'success' => session('success'),
+            'error' => session('error'),
         ]);
+    }
+
+    public function addComment(Request $request, $id): RedirectResponse
+    {
+        $validated = $request->validate([
+            'comment' => 'required|string|max:5000',
+        ]);
+
+        $application = Application::findOrFail($id);
+        $application->comments()->create([
+            'user_id' => $request->user()->id,
+            'comment' => $validated['comment'],
+        ]);
+
+        return Redirect::route('viewApplicationReceived', $application->id)->with('success', 'Komen berjaya ditambah.');
+    }
+
+    public function deleteComment(Request $request, $id, $commentId): RedirectResponse
+    {
+        $comment = ApplicationComment::where('application_id', $id)->findOrFail($commentId);
+        abort_unless($comment->user_id === $request->user()->id, 403);
+        $comment->delete();
+
+        return Redirect::route('viewApplicationReceived', $id)->with('success', 'Komen berjaya dipadam.');
+    }
+
+    public function aiReview($id, ApplicationAiReviewer $reviewer): RedirectResponse
+    {
+        $application = Application::findOrFail($id);
+
+        // Fetching the advert and reviewing can take a minute or two.
+        set_time_limit(300);
+
+        try {
+            $application->ai_review = $reviewer->review($application);
+            $application->ai_reviewed_at = now();
+            $application->save();
+        } catch (\Throwable $e) {
+            Log::error('AI review failed', ['application' => $id, 'error' => $e->getMessage()]);
+            return Redirect::route('viewApplicationReceived', $id)->with('error', 'Semakan AI gagal: ' . $e->getMessage());
+        }
+
+        return Redirect::route('viewApplicationReceived', $id)->with('success', 'Semakan AI selesai.');
     }
 
     public function applicationPdf($id)
