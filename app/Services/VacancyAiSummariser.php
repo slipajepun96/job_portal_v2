@@ -53,12 +53,12 @@ PROMPT;
             . "Jawatan: {$vacancy->vacancies_title}\n"
             . "Lokasi: {$vacancy->vacancies_location}\n"
             . 'Keterangan: ' . ($vacancy->vacancies_description ?: '-') . "\n"
-            . "Pautan iklan: {$vacancy->ads_link}\n\n"
+            . "Pautan iklan: " . ($vacancy->ads_link ?: '- (iklan PDF dilampirkan)') . "\n\n"
             . '## Pemohon (' . count($applicants) . " orang, JSON)\n"
             . json_encode($applicants, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
         $content = array_values(array_filter([
-            $this->support->downloadAd($vacancy->ads_link),
+            $this->support->adContent($vacancy),
             ['type' => 'text', 'text' => $text],
         ]));
 

@@ -24,6 +24,7 @@ Route::get('/', [IndexController::class, 'welcome'])->name('welcome');
 //application
 Route::get('/application', [ApplicationController::class, 'applicationIndex'])->name('application');
 Route::post('/application', [ApplicationController::class, 'saveApplication'])->name('application.save');
+Route::get('/vacancy/{id}/ads', [VacancyController::class, 'showAdsPdf'])->name('vacancy.ads');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -43,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/vacancy', [VacancyController::class, 'vacancyIndex'])->name('vacancy');
     Route::post('/vacancy', [VacancyController::class, 'saveVacancy'])->name('vacancy.save');
     Route::post('/vacancy/delete', [VacancyController::class, 'deleteVacancy'])->name('vacancy.delete');
+    Route::post('/vacancy/{id}/update', [VacancyController::class, 'updateVacancy'])->name('vacancy.update');
 
     //applicationReceiver
     Route::get('/application-received', [ApplicationController::class, 'applicationReceivedIndex'])->name('applicationReceived');

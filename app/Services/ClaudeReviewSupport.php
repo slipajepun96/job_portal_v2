@@ -5,6 +5,8 @@ namespace App\Services;
 use Anthropic\Client;
 use Anthropic\Lib\Streaming\MessageAccumulator;
 use App\Models\Application;
+use App\Models\Vacancy;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 use Throwable;
@@ -59,6 +61,23 @@ class ClaudeReviewSupport
         }
 
         return array_intersect_key(is_array($snapshot) ? $snapshot : [], array_flip(self::RELEVANT_FIELDS));
+    }
+
+    /**
+     * The advert as a content block: the uploaded PDF if there is one,
+     * otherwise whatever can be downloaded from the advert link.
+     */
+    public function adContent(Vacancy $vacancy): ?array
+    {
+        if ($vacancy->ads_pdf && Storage::disk('local')->exists($vacancy->ads_pdf)) {
+            return ['type' => 'document', 'source' => [
+                'type' => 'base64',
+                'media_type' => 'application/pdf',
+                'data' => base64_encode(Storage::disk('local')->get($vacancy->ads_pdf)),
+            ]];
+        }
+
+        return $this->downloadAd($vacancy->ads_link);
     }
 
     /**

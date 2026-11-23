@@ -36,6 +36,7 @@ class Vacancy extends Model
         'start_date',
         'end_date',
         'ads_link',
+        'ads_pdf',
         'ai_summary',
         'ai_summary_status',
         'ai_summary_error',

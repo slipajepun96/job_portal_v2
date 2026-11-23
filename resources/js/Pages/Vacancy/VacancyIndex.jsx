@@ -7,6 +7,7 @@ import { Badge } from '@/Components/ui/badge';
 import VacancyAddVacancy from './Partials/VacancyAddVacancy';
 import VacancyDeleteVacancy from './Partials/VacancyDeleteVacancy';
 import { useState, useEffect} from 'react';
+import { FileText } from 'lucide-react';
 
 export default function VacancyIndex({vacancy, success}) {
 
@@ -55,8 +56,16 @@ export default function VacancyIndex({vacancy, success}) {
             Header: 'Pautan Iklan',
             accessor: ['ads_link'],
             Cell: ({ row }) => (
-                <div className="flex flex-col">
-                    <a href={row.ads_link} target='_blank' rel='noreferrer' className='break-all text-sm font-medium text-primary hover:underline'>{row.ads_link}</a> 
+                <div className="flex flex-col gap-1">
+                    {row.ads_pdf && (
+                        <a href={route('vacancy.ads', row.id)} target='_blank' rel='noreferrer' className='flex items-center gap-1 text-sm font-medium text-primary hover:underline'>
+                            <FileText className="h-4 w-4" /> PDF Iklan
+                        </a>
+                    )}
+                    {row.ads_link && (
+                        <a href={row.ads_link} target='_blank' rel='noreferrer' className='break-all text-sm font-medium text-primary hover:underline'>{row.ads_link}</a>
+                    )}
+                    {!row.ads_pdf && !row.ads_link && <span className="text-sm text-muted-foreground">-</span>}
                 </div>
             ),
         },
@@ -83,7 +92,7 @@ export default function VacancyIndex({vacancy, success}) {
             accessor: 'actions',
             Cell: ({ row }) => (
                 <div className="flex space-x-2 gap-2">
-                    {/* <AllotteeEdit allottee={row} /> */}
+                    <VacancyAddVacancy vacancy={row} />
                     <VacancyDeleteVacancy vacancy={row}/>
                     {/* {<PrimaryButton
                         className="px-2 py-1 text-white bg-red-500 rounded hover:bg-red-600"
@@ -150,7 +159,7 @@ export default function VacancyIndex({vacancy, success}) {
                         <div className="p-6">
                             {successMessage && (
                                 <div className="mb-4">
-                                    <Alert type="success" message="Berjaya dipadam." />
+                                    <Alert key={success} type="success" message={success} />
                                 </div>
 
                             )}

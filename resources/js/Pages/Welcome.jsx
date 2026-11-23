@@ -133,9 +133,9 @@ export default function Welcome({ auth, vacancies, success }) {
                                         <Button asChild className="flex-1">
                                             <Link href={route('application')}>Mohon</Link>
                                         </Button>
-                                        {vacancy.ads_link && (
+                                        {(vacancy.ads_pdf || vacancy.ads_link) && (
                                             <Button asChild variant="outline">
-                                                <a href={vacancy.ads_link} target="_blank" rel="noreferrer">
+                                                <a href={vacancy.ads_pdf ? route('vacancy.ads', vacancy.id) : vacancy.ads_link} target="_blank" rel="noreferrer">
                                                     Iklan <ExternalLink />
                                                 </a>
                                             </Button>
