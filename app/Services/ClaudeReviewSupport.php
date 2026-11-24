@@ -96,7 +96,9 @@ class ClaudeReviewSupport
         }
 
         try {
-            $response = Http::timeout(30)->withOptions(['allow_redirects' => true])->get($url);
+            $response = Http::timeout(30)
+                ->withOptions(['allow_redirects' => true, 'verify' => $this->caBundle()])
+                ->get($url);
         } catch (Throwable) {
             return null;
         }
@@ -197,10 +199,23 @@ class ClaudeReviewSupport
     private function client(): Client
     {
         if ($this->client === null) {
+            // The SDK also wraps this Guzzle client for streaming, so both paths use the bundle.
+            $options = ['transporter' => new \GuzzleHttp\Client(['verify' => $this->caBundle()])];
             $key = config('services.anthropic.key');
-            $this->client = $key ? new Client(apiKey: $key) : new Client();
+
+            $this->client = $key
+                ? new Client(apiKey: $key, requestOptions: $options)
+                : new Client(requestOptions: $options);
         }
 
         return $this->client;
+    }
+
+    /** Bundled CA file if present, otherwise PHP's default certificate store. */
+    private function caBundle(): string|bool
+    {
+        $path = config('services.anthropic.ca_bundle');
+
+        return $path && is_file($path) ? $path : true;
     }
 }
