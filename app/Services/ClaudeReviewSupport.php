@@ -151,8 +151,6 @@ class ClaudeReviewSupport
                     'effort' => 'medium',
                     'format' => ['type' => 'json_schema', 'schema' => $schema],
                 ],
-                betas: ['server-side-fallback-2026-07-01'],
-                fallbacks: 'default',
                 requestOptions: ['timeout' => 900],
             );
 

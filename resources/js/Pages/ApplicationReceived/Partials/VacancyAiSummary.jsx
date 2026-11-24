@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-import { Sparkles, Loader2, ChevronDown, ChevronRight } from 'lucide-react';
+import { Sparkles, Loader2, ChevronDown, ChevronRight, Printer } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge';
 import Alert from '@/Components/Alert';
@@ -31,10 +31,11 @@ function CandidateRow({ candidate, rank }) {
 
     return (
         <div className="border-b border-border last:border-b-0">
+            <div className="flex items-start hover:bg-accent/50">
             <button
                 type="button"
                 onClick={() => setOpen(!open)}
-                className="flex w-full items-start gap-3 p-3 text-left hover:bg-accent/50"
+                className="flex min-w-0 flex-1 items-start gap-3 p-3 text-left"
             >
                 <Chevron className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="w-6 shrink-0 pt-0.5 text-sm tabular-nums text-muted-foreground">{rank}.</span>
@@ -47,6 +48,14 @@ function CandidateRow({ candidate, rank }) {
                     <p className="mt-1 text-sm text-muted-foreground">{candidate.summary}</p>
                 </div>
             </button>
+                {candidate.application_id && (
+                    <Button asChild size="sm" variant="outline" className="m-3 shrink-0">
+                        <a href={route('applicationPdf', candidate.application_id)} target="_blank" rel="noreferrer">
+                            <Printer /> Cetak Borang
+                        </a>
+                    </Button>
+                )}
+            </div>
             {open && (
                 <div className="space-y-3 pb-4 pl-[4.25rem] pr-3">
                     <div className="grid gap-4 md:grid-cols-2">

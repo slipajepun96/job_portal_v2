@@ -30,7 +30,8 @@ return [
 
     'anthropic' => [
         'key' => env('ANTHROPIC_API_KEY'),
-        'model' => env('ANTHROPIC_MODEL', 'claude-opus-5-5'),
+        // Fixed to Haiku on purpose: ANTHROPIC_MODEL in .env is ignored.
+        'model' => 'claude-haiku-5-5',
         // CA bundle shipped with the project, so HTTPS works on servers whose
         // PHP has no certificate store configured (common on Windows).
         'ca_bundle' => env('ANTHROPIC_CA_BUNDLE', resource_path('certs/cacert.pem')),
